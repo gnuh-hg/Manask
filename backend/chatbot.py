@@ -62,6 +62,9 @@ def validate_color(color: Optional[str]) -> str:
     return DEFAULT_COLOR
 
 
+
+
+
 def enforce_history_limit(user_id: int, db: Session):
     """
     ✅ FIX: Xóa tin nhắn cũ nhất nếu đã đạt giới hạn 50 tin.
@@ -124,15 +127,43 @@ def call_claude_api(user_message: str, history: list, user_context: str) -> dict
     Gọi Claude API và trả về response có cấu trúc:
     { "message": str, "type": str|None, "data": dict|None }
     
+    ✅ IMPROVED: Claude detects user language - handles non-diacritical Vietnamese
     ✅ IMPROVED: System prompt rõ ràng hơn về folder_tree vs roadmap
     ✅ IMPROVED: Validation AI output structure
     ✅ IMPROVED: Debug logging
     """
     client = anthropic.Anthropic(api_key=database.ANTHROPIC_API_KEY)
 
+    # Language-specific templates (will be chosen by Claude based on detected language)
+    templates = {
+        'vi': {
+            'lang_instruction': "Detect the language of the user's message. If it's Vietnamese (including non-diacritical Vietnamese like 'toi', 'va', etc.), respond ENTIRELY in Vietnamese.",
+            'folder_tree_msg': "✅ Tôi đã tạo xong cấu trúc **[title]** gồm [X] folder, [Y] project và [Z] task. Xem preview và nhấn **Save** để lưu vào workspace của bạn!",
+            'roadmap_msg': "✅ Tôi đã tạo xong roadmap **[title]** gồm [N_FOLDER] giai đoạn chính và [N_PROJECT] module chi tiết ([TOTAL] nodes). Xem preview và nhấn **Save** để lưu vào workspace của bạn!",
+            'ambiguous_msg': "Bạn muốn (1) một cấu trúc folder & task được tổ chức để nhập vào workspace, hay (2) một timeline trực quan hiển thị các giai đoạn và milestone?"
+        },
+        'en': {
+            'lang_instruction': "If the user's message is in English, respond ENTIRELY in English.",
+            'folder_tree_msg': "✅ I've created the **[title]** structure with [X] folders, [Y] projects, and [Z] tasks. Check the preview and click **Save** to add it to your workspace!",
+            'roadmap_msg': "✅ I've created the **[title]** roadmap with [N_FOLDER] main phases and [N_PROJECT] detailed modules ([TOTAL] nodes). Check the preview and click **Save** to add it to your workspace!",
+            'ambiguous_msg': "Would you like (1) an organized folder & task structure to import into your workspace, or (2) a visual timeline showing the phases and milestones?"
+        }
+    }
+
+    # Combine templates for use in prompt
+    vi_templates = templates['vi']
+    en_templates = templates['en']
+
     system_prompt = f"""You are Manask AI — a smart, proactive assistant built into the Manask task management application.
 Your job is to help users organize their work, visualize projects, analyze progress, and find tasks efficiently.
 You have access to the user's actual workspace data below. Use it to give precise, personalized answers.
+
+IMPORTANT - LANGUAGE DETECTION:
+Detect the language of the user's message. The user may write in:
+- English
+- Vietnamese (including non-diacritical Vietnamese like 'toi', 'va', 'khong', 'tao' - when unikey is disabled)
+
+Match the language and respond ENTIRELY in that language. Do NOT mix languages.
  
 {user_context}
  
@@ -181,8 +212,9 @@ Ask yourself: Is the user thinking about STRUCTURE or TIME?
   Signals: "roadmap", "timeline", "phases", "milestones", "stages", "step by step"
   Examples: "Learning roadmap for Python", "Roadmap from MVP to launch"
  
-→ AMBIGUOUS? Ask the user:
-  Set type=null and message: "Would you like (1) an organized folder & task structure to import into your workspace, or (2) a visual timeline showing the phases and milestones?"
+→ AMBIGUOUS? Ask the user (in their detected language):
+  Vietnamese: "{vi_templates['ambiguous_msg']}"
+  English: "{en_templates['ambiguous_msg']}"
  
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 SECTION 3 — FOLDER TREE SPECIFICATION
@@ -250,9 +282,11 @@ STRUCTURAL RULES:
 7. time_spent unit: seconds (3600 = 1 hour).
 8. process range: 0–100.
  
-MANDATORY MESSAGE FORMAT:
-For the "message" field, you MUST use exactly this template:
-"✅ Tôi đã tạo xong cấu trúc **[title]** gồm [X] folder, [Y] project và [Z] task. Xem preview và nhấn **Save** để lưu vào workspace của bạn!"
+MANDATORY MESSAGE FORMAT (Vietnamese):
+"{vi_templates['folder_tree_msg']}"
+
+MANDATORY MESSAGE FORMAT (English):
+"{en_templates['folder_tree_msg']}"
  
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 SECTION 4 — ROADMAP SPECIFICATION
@@ -345,9 +379,11 @@ Medium (4-6 folders, 9-20 nodes)       → fan-out layout, zoom 0.75
 Detailed (7+ folders, 21-40 nodes)     → full fan-out, zoom 0.55, generate ALL nodes
 If user provides explicit folder/module names → treat as DETAILED, generate every named node
 
-MANDATORY MESSAGE FORMAT:
-✅ Tôi đã tạo xong roadmap **[title]** gồm [N_FOLDER] giai đoạn chính và [N_PROJECT] module chi tiết ([TOTAL] nodes).
-Xem preview và nhấn **Save** để lưu vào workspace của bạn!
+MANDATORY MESSAGE FORMAT (Vietnamese):
+"{vi_templates['roadmap_msg']}"
+
+MANDATORY MESSAGE FORMAT (English):
+"{en_templates['roadmap_msg']}"
  
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 SECTION 5 — SMART ANALYSIS SPECIFICATION
@@ -504,6 +540,7 @@ FINAL REMINDERS
 ✅ If data is empty: respond warmly and guide the user to get started.
 ✅ For folder_tree and roadmap: ALWAYS use the mandatory message template exactly — this triggers the preview panel.
 ✅ For folder_tree: EVERY project must have ≥ 2 tasks — reduce projects before leaving any empty."""
+
 
 
     # Build messages từ history
