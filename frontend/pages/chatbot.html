@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Assistant - Manask</title>
+    <link rel="icon" href="../img/logo_web_v2.png" type="image/png">
+
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/base.css">
+    <link rel="stylesheet" href="../css/sidebar_global.css">
+    <link rel="stylesheet" href="../css/chatbot.css">
+
+    <!-- Markdown renderer -->
+    <script src="https://cdn.jsdelivr.net/npm/marked@9/marked.min.js"></script>
+    <script type="module" src="../js/sidebar_global.js" defer></script>
+    <script type="module" src="../js/chatbot.js" defer></script>
+</head>
+<body>
+
+<div class="app-content">
+
+    <!-- ── PAGE HEADER ────────────────────────────────────────────── -->
+    <div class="cb-page-header">
+        <div class="cb-title-block">
+            <div class="cb-title-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                     stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                </svg>
+            </div>
+            <div class="cb-page-title" data-i18n="chatbot.title">AI Assistant</div>
+        </div>
+        <div class="cb-header-actions">
+            <button id="cb-delete-btn" class="cb-delete-btn">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                     stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="3 6 5 6 21 6"/>
+                    <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+                    <path d="M10 11v6M14 11v6"/>
+                </svg>
+                <span data-i18n="chatbot.btn_clear">Clear history</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- ── MAIN APP ────────────────────────────────────────────────── -->
+    <div id="cb-app">
+
+        <!-- CHAT COLUMN -->
+        <div id="cb-chat-col">
+
+            <!-- Thread -->
+            <div id="cb-thread" role="log" aria-live="polite" aria-atomic="false"></div>
+
+            <!-- Input area -->
+            <div id="cb-input-area">
+                <div class="cb-input-wrap">
+                    <textarea
+                        id="cb-input"
+                        data-i18n-placeholder="chatbot.input_placeholder"
+                        placeholder="Ask anything..."
+                        rows="1"
+                        maxlength="2000"></textarea>
+                    <button id="cb-send-btn" aria-label="Send message">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                             stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="22" y1="2" x2="11" y2="13"/>
+                            <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+                        </svg>
+                    </button>
+                </div>
+                <p class="cb-input-hint" data-i18n="chatbot.input_hint">Enter to send · Shift+Enter for new line</p>
+            </div>
+        </div>
+
+        <!-- RESIZER — Desktop only drag handle -->
+        <div id="cb-resizer" hidden></div>
+
+        <!-- PREVIEW PANEL — Desktop right sidebar -->
+        <aside id="cb-preview-panel" class="cb-preview-panel" hidden>
+            <div class="cb-preview-header">
+                <div class="cb-preview-title-block">
+                    <span class="cb-preview-badge" id="cb-preview-badge"></span>
+                    <span class="cb-preview-title-text" id="cb-preview-title"></span>
+                </div>
+                <div class="cb-preview-header-btns">
+                    <button class="cb-preview-save-btn" id="cb-preview-save-btn">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                             stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+                            <polyline points="17 21 17 13 7 13 7 21"/>
+                            <polyline points="7 3 7 8 15 8"/>
+                        </svg>
+                        <span data-i18n="chatbot.btn_save">Save</span>
+                    </button>
+                    <button class="cb-preview-close-btn" id="cb-preview-close-btn" aria-label="Close preview">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                             stroke-width="2.5" stroke-linecap="round">
+                            <line x1="18" y1="6" x2="6" y2="18"/>
+                            <line x1="6"  y1="6" x2="18" y2="18"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            <div id="cb-preview-content" class="cb-preview-content"></div>
+        </aside>
+
+    </div><!-- /#cb-app -->
+
+    <!-- ── MOBILE PREVIEW OVERLAY ─────────────────────────────────── -->
+    <div id="cb-mobile-preview" class="cb-mobile-preview" hidden>
+        <div class="cb-preview-header">
+            <div class="cb-preview-title-block">
+                <span class="cb-preview-badge" id="cb-mob-preview-badge"></span>
+                <span class="cb-preview-title-text" id="cb-mob-preview-title"></span>
+            </div>
+            <div class="cb-preview-header-btns">
+                <button class="cb-preview-save-btn" id="cb-mob-preview-save-btn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                         stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+                        <polyline points="17 21 17 13 7 13 7 21"/>
+                        <polyline points="7 3 7 8 15 8"/>
+                    </svg>
+                    <span data-i18n="chatbot.btn_save">Save</span>
+                </button>
+                <button class="cb-preview-close-btn" id="cb-mob-preview-close-btn" aria-label="Close preview">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                         stroke-width="2.5" stroke-linecap="round">
+                        <line x1="18" y1="6" x2="6" y2="18"/>
+                        <line x1="6"  y1="6" x2="18" y2="18"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <div id="cb-mob-preview-content" class="cb-preview-content"></div>
+    </div>
+
+    <!-- ── CONFIRM DELETE DIALOG ──────────────────────────────────── -->
+    <div id="cb-confirm-overlay" class="cb-confirm-overlay" hidden>
+        <div class="cb-confirm-box">
+            <div class="cb-confirm-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                     stroke-width="2" stroke-linecap="round">
+                    <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/>
+                    <line x1="12" y1="9"  x2="12" y2="13"/>
+                    <line x1="12" y1="17" x2="12.01" y2="17"/>
+                </svg>
+            </div>
+            <h3 class="cb-confirm-title" data-i18n="chatbot.confirm_title">Clear conversation?</h3>
+            <p class="cb-confirm-desc" data-i18n="chatbot.confirm_desc">All messages will be permanently deleted. This cannot be undone.</p>
+            <div class="cb-confirm-actions">
+                <button class="cb-confirm-cancel" id="cb-confirm-cancel"
+                        data-i18n="chatbot.btn_cancel">Cancel</button>
+                <button class="cb-confirm-ok"     id="cb-confirm-ok"
+                        data-i18n="chatbot.btn_confirm_clear">Clear all</button>
+            </div>
+        </div>
+    </div>
+
+</div><!-- /.app-content -->
+
+</body>
+</html>

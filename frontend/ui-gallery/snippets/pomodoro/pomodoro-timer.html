@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Pomodoro timer</title>
+  <link rel="stylesheet" href="../../shared/reset.css">
+  <link rel="stylesheet" href="../../shared/tokens.css">
+  <style>
+    :root {
+      --glow-color: rgba(99,102,241,0.28);
+    }
+
+    body {
+      width: 280px;
+      height: 320px;
+      background: transparent;
+      font-family: var(--font-sans);
+      color: var(--text-primary);
+      display: flex;
+      flex-direction: column;
+      padding: 14px;
+      position: relative;
+      transform: perspective(800px) rotateX(3deg) rotateY(-4deg);
+      box-sizing: border-box;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50%      { transform: translateY(-3px); }
+    }
+
+    /* ── Glow pool ── */
+    .glow-pool {
+      position: absolute;
+      width: 55%;
+      height: 50%;
+      left: 22%;
+      top: 25%;
+      background: radial-gradient(ellipse at 50% 50%, var(--glow-color) 0%, transparent 70%);
+      filter: blur(28px);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── Box tabs — lệch trái, overlap xuống box-timer ── */
+    .box-tabs {
+      width: 75%;
+      align-self: flex-start;
+      margin-left: 8px;
+      background: var(--bg-elevated);
+      border-radius: var(--radius-md);
+      padding: 5px 8px;
+      display: flex;
+      gap: 4px;
+      flex-shrink: 0;
+      position: relative;
+      z-index: 2;
+      margin-bottom: -16px;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.4);
+      animation: float 3s ease-in-out infinite;
+    }
+
+    .tab {
+      flex: 1;
+      text-align: center;
+      padding: 5px 0;
+      font-size: 11px;
+      font-weight: 500;
+      border-radius: var(--radius-sm);
+      color: var(--text-secondary);
+      cursor: default;
+    }
+    .tab.active {
+      background: var(--accent-primary);
+      color: #fff;
+    }
+
+    /* ── Box timer — pha giữa 1s ── */
+    .box-timer {
+      width: 100%;
+      background: var(--bg-surface);
+      border-radius: var(--radius-lg);
+      padding: 24px 16px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex: 1;
+      position: relative;
+      z-index: 1;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.55), 0 0 20px var(--glow-color);
+      box-sizing: border-box;
+      overflow: hidden;
+      animation: float 3s ease-in-out infinite 1s;
+    }
+
+    .timer-wrap {
+      position: relative;
+      width: 148px;
+      height: 148px;
+    }
+
+    .timer-svg {
+      width: 148px;
+      height: 148px;
+      transform: rotate(-90deg);
+    }
+
+    .ring-bg {
+      fill: none;
+      stroke: var(--bg-elevated);
+      stroke-width: 6;
+    }
+
+    /* r=66 → C = 2π×66 ≈ 414.69 */
+    .ring-progress {
+      fill: none;
+      stroke: var(--accent-primary);
+      stroke-width: 6;
+      stroke-linecap: round;
+      stroke-dasharray: 414.69;
+      stroke-dashoffset: 0;
+      transition: stroke 0.5s ease;
+    }
+
+    .timer-center {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+    }
+
+    .timer-digits {
+      font-size: 30px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      line-height: 1;
+    }
+
+    .timer-mode {
+      font-size: 9px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+      margin-top: 2px;
+    }
+
+    .session-dots {
+      display: flex;
+      gap: 4px;
+      margin-top: 6px;
+    }
+    .sdot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--bg-elevated);
+    }
+    .sdot.done { background: var(--accent-primary); }
+
+    .ring-progress.glow       { filter: drop-shadow(0 0 5px rgba(99,102,241,0.7)); }
+    .ring-progress.glow-break { filter: drop-shadow(0 0 5px rgba(34,197,94,0.7)); }
+
+    /* ── Box controls — lệch phải, overlap lên box-timer ── */
+    .box-controls {
+      width: 72%;
+      align-self: flex-end;
+      margin-right: 8px;
+      background: var(--bg-elevated);
+      border-radius: var(--radius-md);
+      padding: 6px 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      flex-shrink: 0;
+      position: relative;
+      z-index: 2;
+      margin-top: -16px;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.4);
+      animation: float 3s ease-in-out infinite 1.5s;
+    }
+
+    .ctrl-btn {
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: var(--radius-sm);
+      background: var(--bg-surface);
+      color: var(--text-secondary);
+    }
+
+    .ctrl-btn.primary {
+      width: 100px;
+      background: var(--accent-primary);
+      color: #fff;
+      font-size: 12px;
+      font-weight: 600;
+      gap: 6px;
+      border-radius: var(--radius-md);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="glow-pool" id="glowPool"></div>
+
+  <!-- Box tabs -->
+  <div class="box-tabs">
+    <div class="tab active" id="tab0">Pomodoro</div>
+    <div class="tab" id="tab1">Nghỉ ngắn</div>
+    <div class="tab" id="tab2">Nghỉ dài</div>
+  </div>
+
+  <!-- Box timer -->
+  <div class="box-timer" id="boxTimer">
+    <div class="timer-wrap">
+      <svg class="timer-svg" viewBox="0 0 148 148">
+        <circle class="ring-bg" cx="74" cy="74" r="66"/>
+        <circle class="ring-progress glow" id="ring" cx="74" cy="74" r="66"/>
+      </svg>
+      <div class="timer-center">
+        <div class="timer-digits" id="digits">25:00</div>
+        <div class="timer-mode" id="modeText">Tập trung</div>
+        <div class="session-dots">
+          <div class="sdot done" id="sd0"></div>
+          <div class="sdot" id="sd1"></div>
+          <div class="sdot" id="sd2"></div>
+          <div class="sdot" id="sd3"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Box controls -->
+  <div class="box-controls">
+    <div class="ctrl-btn">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+        <path d="M2 7a5 5 0 105-5H5m0 0L3 0m2 2L3 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <div class="ctrl-btn primary">
+      <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+        <rect x="2" y="1" width="3" height="10" rx="1" fill="white"/>
+        <rect x="7" y="1" width="3" height="10" rx="1" fill="white"/>
+      </svg>
+      <span>Tạm dừng</span>
+    </div>
+    <div class="ctrl-btn">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+        <path d="M2 2l8 5-8 5V2z" fill="currentColor"/>
+        <rect x="11" y="2" width="1.5" height="10" rx="0.75" fill="currentColor"/>
+      </svg>
+    </div>
+  </div>
+
+  <script>
+  (function () {
+    const CIRC     = 414.69;
+    const ring     = document.getElementById('ring');
+    const digits   = document.getElementById('digits');
+    const modeText = document.getElementById('modeText');
+    const tab0     = document.getElementById('tab0');
+    const tab1     = document.getElementById('tab1');
+    const glowPool = document.getElementById('glowPool');
+    const boxTimer = document.getElementById('boxTimer');
+    const sdots    = [0,1,2,3].map(i => document.getElementById('sd' + i));
+
+    const PHASES = [
+      { label: 'Tập trung', start: 25*60, ticks: 8, color: '#6366f1', glowClass: 'glow',       tabActive: 0, glowColor: 'rgba(99,102,241,0.28)' },
+      { label: 'Nghỉ ngắn', start: 5*60,  ticks: 6, color: '#22c55e', glowClass: 'glow-break', tabActive: 1, glowColor: 'rgba(34,197,94,0.25)'  },
+    ];
+
+    let phase = 0, tick = 0, session = 0;
+
+    function setGlow(color) {
+      document.documentElement.style.setProperty('--glow-color', color);
+      glowPool.style.background = `radial-gradient(ellipse at 50% 50%, ${color} 0%, transparent 70%)`;
+    }
+
+    function render() {
+      const p = PHASES[phase];
+      const remaining = Math.max(0, p.start - tick * 60);
+      const mm = String(Math.floor(remaining / 60)).padStart(2, '0');
+      const ss = String(remaining % 60).padStart(2, '0');
+      digits.textContent = `${mm}:${ss}`;
+
+      ring.style.strokeDashoffset = CIRC * (1 - remaining / p.start);
+      ring.style.stroke = p.color;
+      ring.className    = `ring-progress ${p.glowClass}`;
+
+      modeText.textContent = p.label;
+      [tab0, tab1].forEach((t, i) => t.classList.toggle('active', i === p.tabActive));
+      setGlow(p.glowColor);
+      sdots.forEach((d, i) => d.classList.toggle('done', i <= session % 4));
+    }
+
+    function step() {
+      tick++;
+      const p = PHASES[phase];
+      if (tick >= p.ticks) {
+        tick = 0;
+        phase = (phase + 1) % 2;
+        if (phase === 0) session = (session + 1) % 4;
+      }
+      render();
+    }
+
+    render();
+    setInterval(step, 800);
+  })();
+  </script>
+</body>
+</html>

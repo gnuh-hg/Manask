@@ -1,0 +1,270 @@
+/* ═══════════════════════════════════════════════════════════════
+   help.css — Trang Trung tâm Hỗ trợ
+   ═══════════════════════════════════════════════════════════════ */
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--font-sans);
+  background: var(--bg-base);
+  color: var(--text-primary);
+  min-height: 100vh;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Nav ── */
+.help-nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 40px;
+  height: 52px;
+  background: rgba(14, 13, 18, 0.85);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.nav-logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--text-primary);
+  text-decoration: none;
+}
+
+.logo-web {
+  width: 26px;
+  height: 26px;
+  object-fit: contain;
+}
+
+.btn-nav-dashboard {
+  font-size: 13px;
+  color: var(--text-secondary);
+  text-decoration: none;
+  padding: 6px 14px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  transition: color var(--t-base), border-color var(--t-base);
+}
+
+.btn-nav-dashboard:hover {
+  color: var(--text-primary);
+  border-color: var(--border-subtle);
+}
+
+/* ── Hero ── */
+.help-hero {
+  padding: 80px 40px 64px;
+  text-align: center;
+  background: radial-gradient(ellipse 60% 40% at 50% 0%, rgba(99,102,241,0.12) 0%, transparent 70%);
+}
+
+.help-hero-inner {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.help-hero-badge {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: var(--accent-primary);
+  background: var(--accent-subtle);
+  border: 1px solid rgba(99,102,241,0.25);
+  border-radius: 99px;
+  padding: 4px 14px;
+  margin-bottom: 20px;
+}
+
+.help-hero-title {
+  font-size: clamp(32px, 5vw, 48px);
+  font-weight: 800;
+  line-height: 1.15;
+  margin-bottom: 32px;
+}
+
+.gradient-text {
+  background: linear-gradient(135deg, #818cf8 0%, #6366f1 50%, #a78bfa 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.help-search-wrap {
+  position: relative;
+  max-width: 440px;
+  margin: 0 auto;
+}
+
+.help-search-icon {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-tertiary);
+  pointer-events: none;
+}
+
+#help-search {
+  width: 100%;
+  padding: 12px 16px 12px 42px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  color: var(--text-primary);
+  font-size: 14px;
+  font-family: var(--font-sans);
+  outline: none;
+  transition: border-color var(--t-base), box-shadow var(--t-base);
+}
+
+#help-search::placeholder { color: var(--text-tertiary); }
+
+#help-search:focus {
+  border-color: var(--border-focus);
+  box-shadow: var(--glow-accent);
+}
+
+/* ── Content ── */
+.help-content {
+  flex: 1;
+  max-width: 720px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 40px 24px 80px;
+}
+
+/* ── Tabs ── */
+.help-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 32px;
+}
+
+.help-tab {
+  padding: 6px 16px;
+  border-radius: 99px;
+  border: 1px solid var(--border-color);
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 13px;
+  font-family: var(--font-sans);
+  cursor: pointer;
+  transition: color var(--t-base), background var(--t-base), border-color var(--t-base);
+}
+
+.help-tab:hover {
+  color: var(--text-primary);
+  border-color: var(--border-subtle);
+}
+
+.help-tab.active {
+  background: var(--accent-primary);
+  border-color: var(--accent-primary);
+  color: #fff;
+}
+
+/* ── FAQ ── */
+.help-faq {
+  display: flex;
+  flex-direction: column;
+}
+
+.faq-item {
+  border-bottom: 1px solid var(--border-color);
+}
+
+.faq-item:first-child {
+  border-top: 1px solid var(--border-color);
+}
+
+.faq-q {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 4px;
+  background: transparent;
+  border: none;
+  color: var(--text-primary);
+  font-size: 14px;
+  font-family: var(--font-sans);
+  font-weight: 500;
+  text-align: left;
+  cursor: pointer;
+  transition: color var(--t-base);
+}
+
+.faq-q:hover { color: var(--accent-primary); }
+
+.faq-chevron {
+  flex-shrink: 0;
+  color: var(--text-tertiary);
+  transition: transform var(--t-base), color var(--t-base);
+}
+
+.faq-item.open .faq-chevron {
+  transform: rotate(180deg);
+  color: var(--accent-primary);
+}
+
+.faq-a {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.28s ease, padding var(--t-base);
+  padding: 0 4px;
+}
+
+.faq-item.open .faq-a {
+  max-height: 300px;
+  padding-bottom: 18px;
+}
+
+.faq-a p {
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--text-secondary);
+}
+
+.faq-a strong { color: var(--text-primary); }
+
+/* ── Empty search state ── */
+.faq-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 60px 20px;
+  color: var(--text-tertiary);
+  font-size: 14px;
+}
+
+/* ── Footer ── */
+.help-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 40px;
+  border-top: 1px solid var(--border-color);
+  font-size: 12px;
+  color: var(--text-tertiary);
+}
+
+/* ── Responsive ── */
+@media (max-width: 600px) {
+  .help-nav { padding: 0 16px; }
+  .help-hero { padding: 48px 16px 40px; }
+  .help-content { padding: 28px 16px 60px; }
+  .help-footer { flex-direction: column; gap: 4px; text-align: center; }
+}

@@ -1,0 +1,11 @@
+{
+  "id": "sidebar-collapse",
+  "title": "Sidebar thu gọn/mở rộng",
+  "category": "sidebar",
+  "file": "sidebar-collapse.html",
+  "width": 320,
+  "height": 360,
+  "tags": ["layout", "animation"],
+  "description": "Sidebar tự động collapse và expand lặp lại.",
+  "addedAt": "2026-04-17"
+}

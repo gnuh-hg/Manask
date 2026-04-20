@@ -1,0 +1,11 @@
+{
+  "category": "roadmap",
+  "snippets": [
+    {
+      "id": "roadmap-timeline",
+      "file": "roadmap-timeline.html",
+      "title": "Roadmap node graph",
+      "description": "Node graph DAG với FOLDER/PROJECT cards nối nhau bằng mũi tên bezier màu sắc."
+    }
+  ]
+}

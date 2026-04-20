@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Modal tạo folder</title>
+  <link rel="stylesheet" href="../../shared/reset.css">
+  <link rel="stylesheet" href="../../shared/tokens.css">
+  <style>
+    body {
+      width: 340px;
+      height: 320px;
+      background: transparent;
+      font-family: var(--font-sans);
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      position: relative;
+    }
+
+    @keyframes float  { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-3px)} }
+    @keyframes fadeIn { to { opacity: 1; } }
+
+    /* ── Glow pool (indigo, behind modal) ── */
+    .glow-pool {
+      position: absolute;
+      width: 65%;
+      height: 60%;
+      left: 17%;
+      top: 22%;
+      background: radial-gradient(ellipse at 50% 50%, rgba(99,102,241,0.24) 0%, transparent 70%);
+      filter: blur(26px);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── Overlay (dimmed backdrop) ── */
+    .overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(10,10,18,0.7);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      pointer-events: none;
+      z-index: 1;
+    }
+    .overlay.visible { opacity: 1; }
+
+    /* ── Float folder icon — outside modal, fades when modal opens ── */
+    .float-folder-icon {
+      position: absolute;
+      top: 18px;
+      left: 14px;
+      color: var(--accent-primary);
+      opacity: 0;
+      z-index: 3;
+      animation: float 3s ease-in-out infinite 0s, fadeIn 0.3s ease forwards 0.1s;
+      transition: opacity 0.35s ease;
+      filter: drop-shadow(0 0 8px rgba(99,102,241,0.5));
+    }
+    .float-folder-icon.hidden { opacity: 0 !important; }
+
+    /* ── Modal — FIXED (no float), stable anchor ── */
+    .modal {
+      position: relative;
+      width: 300px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 16px;
+      box-shadow:
+        0 20px 60px rgba(0,0,0,0.6),
+        0 0 30px rgba(99,102,241,0.2),
+        0 0 0 1px rgba(99,102,241,0.08);
+      transform: scale(0.88);
+      opacity: 0;
+      transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1), opacity 0.25s ease;
+      box-sizing: border-box;
+      z-index: 2;
+    }
+    .modal.visible {
+      transform: scale(1);
+      opacity: 1;
+    }
+
+    /* ── Tabs ── */
+    .tabs {
+      display: flex;
+      gap: 4px;
+      background: var(--bg-input);
+      border-radius: var(--radius-md);
+      padding: 3px;
+      margin-bottom: 14px;
+    }
+    .tab {
+      flex: 1;
+      text-align: center;
+      font-size: 12px;
+      font-weight: 500;
+      padding: 5px 0;
+      border-radius: var(--radius-sm);
+      color: var(--text-secondary);
+      cursor: default;
+    }
+    .tab.active { background: var(--accent-primary); color: #fff; }
+
+    /* ── Input ── */
+    .input-wrap { position: relative; margin-bottom: 12px; }
+    .name-input {
+      width: 100%;
+      background: var(--bg-input);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 8px 10px;
+      font-size: 12.5px;
+      font-family: var(--font-sans);
+      color: var(--text-primary);
+      outline: none;
+      box-sizing: border-box;
+      caret-color: var(--accent-primary);
+    }
+    .name-input::placeholder { color: var(--text-tertiary); }
+    .name-input.focused {
+      border-color: var(--border-focus);
+      box-shadow: 0 0 0 2px rgba(99,102,241,0.15);
+    }
+
+    /* ── Swatches ── */
+    .swatches {
+      display: grid;
+      grid-template-columns: repeat(9, 1fr);
+      gap: 6px;
+      margin-bottom: 14px;
+    }
+    .swatch {
+      width: 22px;
+      height: 22px;
+      border-radius: 6px;
+      cursor: default;
+      opacity: 0;
+      transform: scale(0.6);
+      transition: opacity 0.18s ease, transform 0.22s var(--t-spring);
+      position: relative;
+    }
+    .swatch.visible { opacity: 1; transform: scale(1); }
+    .swatch.selected::after {
+      content: '';
+      position: absolute;
+      inset: -3px;
+      border-radius: 9px;
+      border: 2px solid currentColor;
+    }
+
+    /* ── Footer buttons ── */
+    .footer { display: flex; justify-content: flex-end; gap: 8px; }
+    .btn {
+      padding: 7px 16px;
+      border-radius: var(--radius-md);
+      font-size: 12.5px;
+      font-weight: 500;
+      cursor: default;
+    }
+    .btn-cancel {
+      background: transparent;
+      color: var(--text-secondary);
+      border: 1px solid var(--border-subtle);
+    }
+    .btn-accept {
+      background: var(--accent-primary);
+      color: #fff;
+      border: none;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+    .btn-accept.pulse {
+      transform: scale(1.04);
+      box-shadow: 0 0 0 3px rgba(99,102,241,0.3);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="glow-pool"></div>
+  <div class="overlay" id="overlay"></div>
+
+  <!-- Floating folder icon — fades out when modal opens -->
+  <div class="float-folder-icon" id="folderIcon">
+    <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M20 6h-8l-2-2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2z" opacity="0.9"/>
+    </svg>
+  </div>
+
+  <div class="modal" id="modal">
+    <div class="tabs">
+      <div class="tab active">Tạo folder</div>
+      <div class="tab">Tạo project</div>
+    </div>
+
+    <div class="input-wrap">
+      <input class="name-input" id="nameInput" type="text" placeholder="Tên folder" readonly>
+    </div>
+
+    <div class="swatches" id="swatches">
+      <div class="swatch" style="background:#9ca3af;color:#9ca3af"></div>
+      <div class="swatch" style="background:#818cf8;color:#818cf8"></div>
+      <div class="swatch" style="background:#6366f1;color:#6366f1" id="swatchSelected"></div>
+      <div class="swatch" style="background:#fb923c;color:#fb923c"></div>
+      <div class="swatch" style="background:#ec4899;color:#ec4899"></div>
+      <div class="swatch" style="background:#f472b6;color:#f472b6"></div>
+      <div class="swatch" style="background:#fde047;color:#fde047"></div>
+      <div class="swatch" style="background:#4ade80;color:#4ade80"></div>
+      <div class="swatch" style="background:#f87171;color:#f87171"></div>
+      <div class="swatch" style="background:#06b6d4;color:#06b6d4"></div>
+      <div class="swatch" style="background:#34d399;color:#34d399"></div>
+      <div class="swatch" style="background:#a78bfa;color:#a78bfa"></div>
+      <div class="swatch" style="background:#60a5fa;color:#60a5fa"></div>
+      <div class="swatch" style="background:#f43f5e;color:#f43f5e"></div>
+      <div class="swatch" style="background:#fb7185;color:#fb7185"></div>
+      <div class="swatch" style="background:#94a3b8;color:#94a3b8"></div>
+      <div class="swatch" style="background:#c084fc;color:#c084fc"></div>
+      <div class="swatch" style="background:#2dd4bf;color:#2dd4bf"></div>
+    </div>
+
+    <div class="footer">
+      <div class="btn btn-cancel">Hủy</div>
+      <div class="btn btn-accept" id="btnAccept">Tạo mới</div>
+    </div>
+  </div>
+
+  <script>
+  (function () {
+    const overlay        = document.getElementById('overlay');
+    const modal          = document.getElementById('modal');
+    const nameInput      = document.getElementById('nameInput');
+    const swatchEls      = document.querySelectorAll('.swatch');
+    const swatchSelected = document.getElementById('swatchSelected');
+    const btnAccept      = document.getElementById('btnAccept');
+    const folderIcon     = document.getElementById('folderIcon');
+    const TEXT           = 'Dự án 2026';
+    const SWATCH_STAGGER = 38;
+
+    let timers = [];
+    function after(ms, fn) { timers.push(setTimeout(fn, ms)); }
+    function clearAll() { timers.forEach(clearTimeout); timers = []; }
+
+    function resetAll() {
+      overlay.classList.remove('visible');
+      modal.classList.remove('visible');
+      nameInput.value = '';
+      nameInput.classList.remove('focused');
+      swatchEls.forEach(s => s.classList.remove('visible', 'selected'));
+      btnAccept.classList.remove('pulse');
+      folderIcon.classList.remove('hidden');
+    }
+
+    function typeWriter(str, i, cb) {
+      if (i > str.length) { cb && cb(); return; }
+      nameInput.value = str.slice(0, i);
+      after(65, () => typeWriter(str, i + 1, cb));
+    }
+
+    function runCycle() {
+      resetAll();
+
+      after(100, () => {
+        overlay.classList.add('visible');
+        folderIcon.classList.add('hidden');
+      });
+
+      after(200, () => modal.classList.add('visible'));
+
+      after(650, () => {
+        nameInput.classList.add('focused');
+        typeWriter(TEXT, 0, () => {
+          swatchEls.forEach((sw, idx) => {
+            after(idx * SWATCH_STAGGER, () => sw.classList.add('visible'));
+          });
+
+          const totalSwatchTime = swatchEls.length * SWATCH_STAGGER + 80;
+
+          after(totalSwatchTime, () => {
+            swatchSelected.classList.add('selected');
+          });
+
+          after(totalSwatchTime + 200, () => {
+            btnAccept.classList.add('pulse');
+          });
+
+          after(totalSwatchTime + 1600, () => {
+            modal.classList.remove('visible');
+            overlay.classList.remove('visible');
+            after(500, runCycle);
+          });
+        });
+      });
+    }
+
+    runCycle();
+  })();
+  </script>
+</body>
+</html>

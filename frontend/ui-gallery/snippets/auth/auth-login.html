@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>Login form</title>
+<link rel="stylesheet" href="../../shared/reset.css">
+<link rel="stylesheet" href="../../shared/tokens.css">
+<style>
+  body {
+    width: 320px;
+    height: 360px;
+    background: transparent;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 6px;
+    padding: 14px;
+    box-sizing: border-box;
+    font-family: var(--font-sans);
+    position: relative;
+    overflow: hidden;
+  }
+
+  @keyframes float  { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-3px)} }
+  @keyframes fadeIn { to { opacity: 1; } }
+  @keyframes slideUp { to { opacity: 1; transform: translateY(0); } }
+
+  /* ── Dot backdrop ── */
+  .backdrop {
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(circle, rgba(255,255,255,0.035) 1px, transparent 1px);
+    background-size: 22px 22px;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  /* ── Glow pool (cyan) ── */
+  .glow-pool {
+    position: absolute;
+    width: 60%;
+    height: 55%;
+    left: 18%;
+    top: 30%;
+    background: radial-gradient(ellipse at 50% 50%, rgba(6,182,212,0.2) 0%, transparent 70%);
+    filter: blur(28px);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ── Box brand — lệch trái, float 0s ── */
+  .box-brand {
+    width: 78%;
+    align-self: flex-start;
+    margin-left: 4px;
+    background: var(--bg-elevated);
+    border-radius: var(--radius-md);
+    padding: 8px 12px;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 2;
+    margin-bottom: -14px;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.4), 0 0 12px rgba(6,182,212,0.15);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    opacity: 0;
+    animation: float 3s ease-in-out infinite 0s, fadeIn 0.3s ease forwards 0.1s;
+  }
+  .brand-icon {
+    width: 26px;
+    height: 26px;
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    flex-shrink: 0;
+    box-shadow: 0 2px 8px rgba(6,182,212,0.3);
+  }
+  .brand-icon img { width: 26px; height: 26px; object-fit: cover; }
+  .brand-name {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-primary);
+    line-height: 1;
+    margin-bottom: 2px;
+  }
+  .brand-tagline {
+    font-size: 9px;
+    color: var(--text-tertiary);
+  }
+
+  /* ── Box form — FIXED (no float), stable anchor ── */
+  .box-form {
+    flex: 1;
+    background: var(--bg-surface);
+    border-radius: var(--radius-lg);
+    padding: 20px 14px 12px;
+    position: relative;
+    z-index: 1;
+    box-shadow: 0 8px 28px rgba(0,0,0,0.5), 0 0 20px rgba(6,182,212,0.12);
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* === Welcome === */
+  .welcome {
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin-bottom: 4px;
+    opacity: 0;
+    animation: fadeIn 0.25s ease 0.55s forwards;
+  }
+
+  /* === Tabs === */
+  .tabs {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    margin-bottom: 12px;
+    opacity: 0;
+    animation: fadeIn 0.25s ease 0.62s forwards;
+  }
+  .tab-active {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text-primary);
+    border-bottom: 2.5px solid var(--accent-primary);
+    padding-bottom: 1px;
+    letter-spacing: -0.3px;
+  }
+  .tab-sep   { font-size: 13px; color: var(--text-tertiary); }
+  .tab-inactive {
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--text-tertiary);
+    letter-spacing: -0.3px;
+  }
+
+  /* === Divider === */
+  .divider {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+    opacity: 0;
+    animation: fadeIn 0.25s ease 0.70s forwards;
+  }
+  .divider-line { flex: 1; height: 1px; background: var(--border-color); }
+  .divider-text { font-size: 10px; color: var(--text-tertiary); letter-spacing: 0.05em; }
+
+  /* === Fields === */
+  .field {
+    margin-bottom: 8px;
+    opacity: 0;
+    animation: fadeIn 0.22s ease forwards;
+  }
+  .field-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+  .fake-input {
+    width: 100%;
+    box-sizing: border-box;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 8px 12px;
+    font-size: 13px;
+    color: var(--text-primary);
+    font-family: var(--font-sans);
+    min-height: 36px;
+    display: flex;
+    align-items: center;
+    position: relative;
+    transition: border-color 0.18s ease, box-shadow 0.18s ease;
+  }
+  .fake-input.focused {
+    border-color: var(--border-focus);
+    box-shadow: 0 0 0 3px rgba(99,102,241,0.15);
+  }
+  .placeholder { color: var(--text-tertiary); font-size: 13px; }
+  .typed-text  { color: var(--text-primary);  font-size: 13px; }
+  .cursor {
+    display: inline-block;
+    width: 1.5px;
+    height: 13px;
+    background: var(--accent-primary);
+    margin-left: 1px;
+    vertical-align: middle;
+    animation: blink 0.7s step-end infinite;
+  }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+  .eye-icon {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-tertiary);
+  }
+
+  /* === Button === */
+  .btn-login {
+    width: 100%;
+    padding: 10px;
+    background: linear-gradient(135deg, #6366f1 0%, #5254cc 100%);
+    border: none;
+    border-radius: var(--radius-md);
+    color: #fff;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-family: var(--font-sans);
+    cursor: default;
+    margin-top: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    box-shadow: 0 4px 14px rgba(99,102,241,0.35);
+    opacity: 0;
+    animation: fadeIn 0.25s ease forwards;
+    transition: transform 0.15s ease;
+  }
+  .btn-login.pulse { animation: pulse 0.35s ease; }
+  @keyframes pulse { 0%{transform:scale(1)} 50%{transform:scale(1.03)} 100%{transform:scale(1)} }
+  .spinner {
+    width: 13px; height: 13px;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    display: none;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .btn-login.loading .spinner { display: block; }
+
+  /* ── Float-secure badge — lệch phải, float 1.5s ── */
+  .float-secure {
+    align-self: flex-end;
+    margin-right: 4px;
+    background: var(--bg-elevated);
+    border: 1px solid rgba(6,182,212,0.2);
+    border-radius: var(--radius-sm);
+    padding: 4px 10px;
+    font-size: 9.5px;
+    font-weight: 500;
+    color: var(--text-tertiary);
+    position: relative;
+    z-index: 2;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.35);
+    opacity: 0;
+    animation: float 3s ease-in-out infinite 1.5s, fadeIn 0.25s ease forwards 1.3s;
+    flex-shrink: 0;
+  }
+</style>
+</head>
+<body>
+
+  <div class="backdrop"></div>
+  <div class="glow-pool"></div>
+
+  <!-- Box brand -->
+  <div class="box-brand">
+    <div class="brand-icon">
+      <img src="../../img/logo_web.png" alt="Manask">
+    </div>
+    <div>
+      <div class="brand-name">Manask</div>
+      <div class="brand-tagline">Quản lý thông minh</div>
+    </div>
+  </div>
+
+  <!-- Box form (FIXED — no float) -->
+  <div class="box-form">
+    <div class="welcome">Welcome back</div>
+    <div class="tabs">
+      <span class="tab-active">Login</span>
+      <span class="tab-sep">or</span>
+      <span class="tab-inactive">Sign Up</span>
+    </div>
+    <div class="divider">
+      <div class="divider-line"></div>
+      <span class="divider-text">Manask</span>
+      <div class="divider-line"></div>
+    </div>
+
+    <div class="field" id="field-email" style="animation-delay:0.78s">
+      <div class="field-label">Email</div>
+      <div class="fake-input" id="email-input">
+        <span class="placeholder" id="email-placeholder">example@email.com</span>
+        <span class="typed-text" id="email-typed" style="display:none"></span>
+        <span class="cursor" id="email-cursor" style="display:none"></span>
+      </div>
+    </div>
+
+    <div class="field" id="field-pass" style="animation-delay:0.88s">
+      <div class="field-label">Password</div>
+      <div style="position:relative">
+        <div class="fake-input" id="pass-input">
+          <span class="placeholder" id="pass-placeholder">••••••••</span>
+          <span class="typed-text" id="pass-typed" style="display:none"></span>
+          <span class="cursor" id="pass-cursor" style="display:none"></span>
+        </div>
+        <div class="eye-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+            <circle cx="12" cy="12" r="3"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <button class="btn-login" id="btn-login" style="animation-delay:0.98s">
+      <div class="spinner" id="spinner"></div>
+      <span id="btn-text">LOGIN</span>
+    </button>
+  </div>
+
+  <!-- Float-secure badge -->
+  <div class="float-secure">🔒 Kết nối bảo mật</div>
+
+  <script>
+  (function () {
+    const EMAIL    = 'demo@manask.app';
+    const PASSWORD = '••••••••';
+
+    const emailInput       = document.getElementById('email-input');
+    const emailPlaceholder = document.getElementById('email-placeholder');
+    const emailTyped       = document.getElementById('email-typed');
+    const emailCursor      = document.getElementById('email-cursor');
+
+    const passInput       = document.getElementById('pass-input');
+    const passPlaceholder = document.getElementById('pass-placeholder');
+    const passTyped       = document.getElementById('pass-typed');
+    const passCursor      = document.getElementById('pass-cursor');
+
+    const btnLogin = document.getElementById('btn-login');
+    const btnText  = document.getElementById('btn-text');
+    const spinner  = document.getElementById('spinner');
+    const form     = document.querySelector('.box-form');
+
+    function typeText(el, placeholder, typed, cursor, text, delay, charMs, done) {
+      setTimeout(() => {
+        placeholder.style.display = 'none';
+        typed.style.display = 'inline';
+        cursor.style.display = 'inline-block';
+        el.classList.add('focused');
+        let i = 0;
+        const t = setInterval(() => {
+          typed.textContent = text.slice(0, ++i);
+          if (i >= text.length) {
+            clearInterval(t);
+            setTimeout(() => {
+              cursor.style.display = 'none';
+              el.classList.remove('focused');
+              done();
+            }, 400);
+          }
+        }, charMs);
+      }, delay);
+    }
+
+    function run() {
+      typeText(emailInput, emailPlaceholder, emailTyped, emailCursor, EMAIL, 1100, 60, () => {
+        passInput.classList.add('focused');
+        passPlaceholder.style.display = 'none';
+        passTyped.style.display = 'inline';
+        passCursor.style.display = 'inline-block';
+        let i = 0;
+        const t = setInterval(() => {
+          passTyped.textContent = PASSWORD.slice(0, ++i);
+          if (i >= PASSWORD.length) {
+            clearInterval(t);
+            setTimeout(() => {
+              passCursor.style.display = 'none';
+              passInput.classList.remove('focused');
+              btnLogin.classList.add('pulse');
+              setTimeout(() => {
+                btnLogin.classList.remove('pulse');
+                setTimeout(() => {
+                  btnText.style.display = 'none';
+                  spinner.style.display = 'block';
+                  btnLogin.style.background = 'linear-gradient(135deg,#5254cc 0%,#4346aa 100%)';
+                  setTimeout(() => {
+                    form.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+                    form.style.opacity = '0';
+                    form.style.transform = 'translateY(-10px)';
+                    setTimeout(reset, 450);
+                  }, 900);
+                }, 500);
+              }, 400);
+            }, 400);
+          }
+        }, 70);
+      });
+    }
+
+    function reset() {
+      emailPlaceholder.style.display = '';
+      emailTyped.style.display = 'none';
+      emailTyped.textContent = '';
+      emailCursor.style.display = 'none';
+      emailInput.classList.remove('focused');
+
+      passPlaceholder.style.display = '';
+      passTyped.style.display = 'none';
+      passTyped.textContent = '';
+      passCursor.style.display = 'none';
+      passInput.classList.remove('focused');
+
+      btnText.textContent = 'LOGIN';
+      btnText.style.display = 'block';
+      spinner.style.display = 'none';
+      btnLogin.style.background = '';
+
+      form.style.transition = '';
+      form.style.opacity = '';
+      form.style.transform = '';
+
+      ['field-email','field-pass','btn-login'].forEach(id => {
+        const el = document.getElementById(id);
+        el.style.animation = 'none';
+        void el.offsetWidth;
+        el.style.animation = '';
+      });
+
+      setTimeout(run, 800);
+    }
+
+    setTimeout(run, 200);
+  })();
+  </script>
+</body>
+</html>

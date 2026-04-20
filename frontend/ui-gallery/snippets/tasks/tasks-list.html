@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Task list</title>
+  <link rel="stylesheet" href="../../shared/reset.css">
+  <link rel="stylesheet" href="../../shared/tokens.css">
+  <style>
+    body {
+      width: 360px;
+      height: 300px;
+      background: transparent;
+      font-family: var(--font-sans);
+      color: var(--text-primary);
+      display: flex;
+      flex-direction: column;
+      padding: 14px;
+      position: relative;
+      transform: perspective(900px) rotateX(2deg) rotateY(-3deg);
+      box-sizing: border-box;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50%      { transform: translateY(-3px); }
+    }
+
+    /* ── Glow pool — phía sau cluster cards ── */
+    .glow-pool {
+      position: absolute;
+      width: 60%;
+      height: 60%;
+      left: 18%;
+      top: 28%;
+      background: radial-gradient(ellipse at 50% 50%, rgba(99,102,241,0.2) 0%, transparent 70%);
+      filter: blur(28px);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── Box header — lệch phải, float ── */
+    .box-header {
+      width: 62%;
+      align-self: flex-end;
+      margin-right: 6px;
+      background: var(--bg-elevated);
+      border-radius: var(--radius-md);
+      padding: 7px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      flex-shrink: 0;
+      position: relative;
+      z-index: 2;
+      margin-bottom: 8px;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.4);
+      animation: float 3s ease-in-out infinite;
+    }
+
+    .header-title {
+      font-size: 12px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      color: var(--text-primary);
+    }
+    .header-title svg { color: var(--accent-primary); }
+
+    .header-count {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--accent-primary);
+      background: var(--accent-subtle);
+      padding: 2px 8px;
+      border-radius: var(--radius-xs);
+    }
+
+    /* ── Card cluster — transparent wrapper ── */
+    .card-cluster {
+      flex: 1;
+      position: relative;
+      z-index: 1;
+    }
+
+    .card-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    /* Cột phải cao hơn ~8px để lưới không đều */
+    .card-grid .task-card:nth-child(2),
+    .card-grid .task-card:nth-child(4) {
+      margin-top: -8px;
+    }
+
+    .task-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      border-left: 3px solid var(--c);
+      padding: 9px 9px 7px;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      opacity: 0;
+      transform: translateY(8px);
+      transition: opacity 0.28s ease, transform 0.28s ease;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.45), 0 0 8px color-mix(in srgb, var(--c) 20%, transparent);
+      position: relative;
+    }
+    .task-card.visible { opacity: 1; transform: translateY(0); }
+
+    /* Rotation lệch nhau per card */
+    .task-card:nth-child(1) { rotate: -1deg;   animation: float 3s ease-in-out infinite 0s; }
+    .task-card:nth-child(2) { rotate:  0.8deg;  animation: float 3s ease-in-out infinite 0.75s; }
+    .task-card:nth-child(3) { rotate:  1.2deg;  animation: float 3s ease-in-out infinite 1.5s; }
+    .task-card:nth-child(4) { rotate: -0.6deg;  animation: float 3s ease-in-out infinite 2.25s; }
+
+    .card-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 6px;
+    }
+    .card-name {
+      font-size: 11.5px;
+      font-weight: 600;
+      line-height: 1.35;
+      color: var(--text-primary);
+    }
+    .badge-done {
+      flex-shrink: 0;
+      background: var(--accent-primary);
+      color: #fff;
+      font-size: 9.5px;
+      font-weight: 600;
+      padding: 2px 6px;
+      border-radius: var(--radius-xs);
+    }
+
+    .card-due {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 10px;
+      color: var(--text-secondary);
+    }
+    .card-due svg { flex-shrink: 0; color: var(--text-tertiary); }
+
+    .card-progress {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .progress-bar {
+      flex: 1;
+      height: 3px;
+      background: var(--bg-elevated);
+      border-radius: 99px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      background: var(--c);
+      border-radius: 99px;
+      width: 0%;
+      transition: width 0.7s ease;
+    }
+    .progress-pct {
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      min-width: 24px;
+      text-align: right;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="glow-pool"></div>
+
+  <!-- Box header -->
+  <div class="box-header">
+    <div class="header-title">
+      <svg width="13" height="13" viewBox="0 0 14 14" fill="none">
+        <rect x="1" y="1" width="12" height="12" rx="2" stroke="currentColor" stroke-width="1.4"/>
+        <path d="M4 7l2 2 4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      Công việc
+    </div>
+    <div class="header-count">4 tác vụ</div>
+  </div>
+
+  <!-- Card cluster -->
+  <div class="card-cluster">
+    <div class="card-grid">
+      <div class="task-card" style="--c:#6366f1">
+        <div class="card-top">
+          <div class="card-name">Hoàn thiện báo cáo</div>
+          <div class="badge-done">Xong</div>
+        </div>
+        <div class="card-due">
+          <svg width="10" height="10" viewBox="0 0 11 11" fill="none">
+            <rect x="1" y="2" width="9" height="8" rx="1.5" stroke="currentColor" stroke-width="1.2"/>
+            <path d="M3.5 1v2M7.5 1v2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+            <path d="M1 5h9" stroke="currentColor" stroke-width="1"/>
+          </svg>
+          20/05/2026
+        </div>
+        <div class="card-progress">
+          <div class="progress-bar"><div class="progress-fill" data-w="75"></div></div>
+          <div class="progress-pct">75%</div>
+        </div>
+      </div>
+
+      <div class="task-card" style="--c:#22c55e">
+        <div class="card-top">
+          <div class="card-name">Cập nhật tài liệu nhóm</div>
+          <div class="badge-done">Xong</div>
+        </div>
+        <div class="card-due">
+          <svg width="10" height="10" viewBox="0 0 11 11" fill="none">
+            <rect x="1" y="2" width="9" height="8" rx="1.5" stroke="currentColor" stroke-width="1.2"/>
+            <path d="M3.5 1v2M7.5 1v2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+            <path d="M1 5h9" stroke="currentColor" stroke-width="1"/>
+          </svg>
+          30/05/2026
+        </div>
+        <div class="card-progress">
+          <div class="progress-bar"><div class="progress-fill" data-w="40"></div></div>
+          <div class="progress-pct">40%</div>
+        </div>
+      </div>
+
+      <div class="task-card" style="--c:#f59e0b">
+        <div class="card-top">
+          <div class="card-name">Lên kế hoạch tuần</div>
+          <div class="badge-done">Xong</div>
+        </div>
+        <div class="card-due">
+          <svg width="10" height="10" viewBox="0 0 11 11" fill="none">
+            <rect x="1" y="2" width="9" height="8" rx="1.5" stroke="currentColor" stroke-width="1.2"/>
+            <path d="M3.5 1v2M7.5 1v2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+            <path d="M1 5h9" stroke="currentColor" stroke-width="1"/>
+          </svg>
+          25/04/2026
+        </div>
+        <div class="card-progress">
+          <div class="progress-bar"><div class="progress-fill" data-w="90"></div></div>
+          <div class="progress-pct">90%</div>
+        </div>
+      </div>
+
+      <div class="task-card" style="--c:#06b6d4">
+        <div class="card-top">
+          <div class="card-name">Review tiến độ</div>
+          <div class="badge-done">Xong</div>
+        </div>
+        <div class="card-due">
+          <svg width="10" height="10" viewBox="0 0 11 11" fill="none">
+            <rect x="1" y="2" width="9" height="8" rx="1.5" stroke="currentColor" stroke-width="1.2"/>
+            <path d="M3.5 1v2M7.5 1v2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+            <path d="M1 5h9" stroke="currentColor" stroke-width="1"/>
+          </svg>
+          10/05/2026
+        </div>
+        <div class="card-progress">
+          <div class="progress-bar"><div class="progress-fill" data-w="20"></div></div>
+          <div class="progress-pct">20%</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+  (function () {
+    const cards = document.querySelectorAll('.task-card');
+    const fills = document.querySelectorAll('.progress-fill');
+
+    function resetAll() {
+      cards.forEach(c => c.classList.remove('visible'));
+      fills.forEach(f => { f.style.transition = 'none'; f.style.width = '0%'; });
+    }
+
+    function runCycle() {
+      resetAll();
+      cards.forEach((c, i) => setTimeout(() => c.classList.add('visible'), 100 + i * 130));
+      setTimeout(() => {
+        fills.forEach(f => { f.style.transition = 'width 0.7s ease'; f.style.width = f.dataset.w + '%'; });
+      }, 650);
+      setTimeout(() => {
+        cards.forEach(c => { c.style.transition = 'opacity 0.35s ease, transform 0.35s ease'; c.classList.remove('visible'); });
+        setTimeout(() => { cards.forEach(c => { c.style.transition = ''; }); runCycle(); }, 450);
+      }, 4500);
+    }
+
+    runCycle();
+  })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pomodoro - Manask</title>
+  <link rel="icon" href="../img/logo_web_v2.png" type="image/png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=DM+Mono:wght@400;500&display=swap">
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/sidebar_global.css">
+  <link rel="stylesheet" href="../css/hint_float.css">
+  <script type="module" src='../utils.js?v=2'></script>
+  <link rel="stylesheet" href="../css/pomodoro.css">
+  <script type="module" src="../js/sidebar_global.js" defer></script>
+  <script type="module" src="../js/pomodoro.js?v=9" defer></script>
+</head>
+<body>
+
+<div class="app-content">
+<div class="pomo-wrapper">
+  <!-- Timer Panel -->
+  <div class="timer-panel">
+
+    <!-- Mode tabs -->
+    <div class="mode-tabs">
+      <button class="mode-tab active" data-i18n="pomodoro.tabs.pomodoro">Pomodoro</button>
+      <button class="mode-tab" data-i18n="pomodoro.tabs.shortBreak">Short Break</button>
+      <button class="mode-tab" data-i18n="pomodoro.tabs.longBreak">Long Break</button>
+    </div>
+
+    <!-- Timer circle -->
+    <div class="timer-circle-wrap">
+      <svg class="timer-svg" viewBox="0 0 220 220">
+        <circle class="timer-track" cx="110" cy="110" r="100"/>
+        <circle class="timer-progress" id="timerProgress" cx="110" cy="110" r="100"/>
+      </svg>
+      <div class="timer-center">
+        <div class="timer-display" id="timerDisplay">25:00</div>
+        <div class="timer-mode-label" id="modeLabel" data-i18n="pomodoro.mode.focus">Focus</div>
+        <div class="session-dots" id="sessionDots"></div>
+      </div>
+    </div>
+
+    <!-- Task select -->
+    <div class="task-select-wrap">
+      <button class="task-trigger" id="taskTrigger">
+        <span id="taskTriggerLabel" data-i18n="pomodoro.task.selectPlaceholder">— Select active task —</span>
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+          <polyline points="6 9 12 15 18 9"/>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Controls -->
+    <div class="timer-controls">
+      <button class="btn btn-icon" data-i18n-title="pomodoro.controls.reset" title="Reset">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
+          <path d="M3 3v5h5"/>
+        </svg>
+      </button>
+      <button class="btn btn-primary" id="startBtn">
+        <svg id="startIcon" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+          <polygon points="5,3 19,12 5,21"/>
+        </svg>
+        <span id="startLabel" data-i18n="pomodoro.controls.start">Start</span>
+      </button>
+      <button class="btn btn-icon" data-i18n-title="pomodoro.controls.skip" title="Skip">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="5,4 15,12 5,20"/>
+          <line x1="19" y1="5" x2="19" y2="19"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Settings Panel -->
+  <div class="settings-panel">
+    <div class="settings-title">
+      <span class="settings-title-dot"></span>
+      <span data-i18n="pomodoro.settings.title">SETTINGS</span>
+    </div>
+
+    <div class="settings-section">
+      <div class="settings-section-label" data-i18n="pomodoro.settings.durationLabel">Duration (minutes)</div>
+
+      <div class="setting-row">
+        <span class="setting-label" data-i18n="pomodoro.tabs.pomodoro">Pomodoro</span>
+        <div class="num-input-wrap">
+          <button class="num-btn" data-target="focusDur" data-delta="-1">-</button>
+          <input class="num-input" type="number" id="focusDur" value="25" min="1" max="90" readonly>
+          <button class="num-btn" data-target="focusDur" data-delta="1">+</button>
+        </div>
+      </div>
+
+      <div class="setting-row">
+        <span class="setting-label" data-i18n="pomodoro.tabs.shortBreak">Short Break</span>
+        <div class="num-input-wrap">
+          <button class="num-btn" data-target="shortDur" data-delta="-1">-</button>
+          <input class="num-input" type="number" id="shortDur" value="5" min="1" max="30" readonly>
+          <button class="num-btn" data-target="shortDur" data-delta="1">+</button>
+        </div>
+      </div>
+
+      <div class="setting-row">
+        <span class="setting-label" data-i18n="pomodoro.tabs.longBreak">Long Break</span>
+        <div class="num-input-wrap">
+          <button class="num-btn" data-target="longDur" data-delta="-1">-</button>
+          <input class="num-input" type="number" id="longDur" value="15" min="1" max="60" readonly>
+          <button class="num-btn" data-target="longDur" data-delta="1">+</button>
+        </div>
+      </div>
+
+      <div class="setting-row">
+        <span class="setting-label" data-i18n="pomodoro.settings.longBreakAfter">Long Break After</span>
+        <div class="num-input-wrap">
+          <button class="num-btn" data-target="longAfter" data-delta="-1">-</button>
+          <input class="num-input" type="number" id="longAfter" value="4" min="2" max="10" readonly>
+          <button class="num-btn" data-target="longAfter" data-delta="1">+</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="settings-section">
+      <div class="settings-section-label" data-i18n="pomodoro.settings.behaviorLabel">Behavior</div>
+
+      <div class="setting-row">
+        <span class="setting-label" data-i18n="pomodoro.settings.disableBreaks">Disable Breaks</span>
+        <label class="toggle">
+          <input type="checkbox" id="disableBreak">
+          <div class="toggle-track"></div>
+          <div class="toggle-thumb"></div>
+        </label>
+      </div>
+
+      <div class="setting-row">
+        <span class="setting-label" data-i18n="pomodoro.settings.autoStartPomodoro">Auto-start Pomodoro</span>
+        <label class="toggle">
+          <input type="checkbox" id="autoFocus">
+          <div class="toggle-track"></div>
+          <div class="toggle-thumb"></div>
+        </label>
+      </div>
+
+      <div class="setting-row">
+        <span class="setting-label" data-i18n="pomodoro.settings.autoStartBreaks">Auto-start Breaks</span>
+        <label class="toggle">
+          <input type="checkbox" id="autoBreak">
+          <div class="toggle-track"></div>
+          <div class="toggle-thumb"></div>
+        </label>
+      </div>
+
+      <div class="setting-row">
+        <span class="setting-label" data-i18n="pomodoro.settings.soundNotification">Sound Notification</span>
+        <label class="toggle">
+          <input type="checkbox" id="soundEnabled" checked>
+          <div class="toggle-track"></div>
+          <div class="toggle-thumb"></div>
+        </label>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<!-- Mobile Tab Bar — sibling of pomo-wrapper, direct child of app-content -->
+<div class="pomo-tab-bar">
+  <button class="pomo-tab pomo-tab--active" data-tab="timer">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+      <circle cx="12" cy="12" r="10"/>
+      <polyline points="12 6 12 12 16 14"/>
+    </svg>
+    <span data-i18n="pomodoro.tab_timer">Timer</span>
+  </button>
+  <button class="pomo-tab" data-tab="settings">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+      <line x1="4" y1="21" x2="4" y2="14"/>
+      <line x1="4" y1="10" x2="4" y2="3"/>
+      <line x1="12" y1="21" x2="12" y2="12"/>
+      <line x1="12" y1="8" x2="12" y2="3"/>
+      <line x1="20" y1="21" x2="20" y2="16"/>
+      <line x1="20" y1="12" x2="20" y2="3"/>
+      <line x1="1" y1="14" x2="7" y2="14"/>
+      <line x1="9" y1="8" x2="15" y2="8"/>
+      <line x1="17" y1="16" x2="23" y2="16"/>
+    </svg>
+    <span data-i18n="pomodoro.tab_settings">Settings</span>
+  </button>
+</div>
+
+<!-- Task Picker Modal -->
+<div class="task-overlay" id="taskOverlay"></div>
+<div class="task-modal" id="taskModal">
+  <div class="task-modal-header" data-i18n="pomodoro.task.modalHeader">Select Active Task</div>
+
+  <div class="task-search-wrap">
+    <svg class="task-search-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+      <circle cx="11" cy="11" r="8"/>
+      <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+    </svg>
+    <input
+      id="taskSearchInput"
+      class="task-search-input"
+      type="text"
+      placeholder="Search tasks..."
+      autocomplete="off"
+      data-i18n-placeholder="pomodoro.task.searchPlaceholder"
+    />
+  </div>
+
+  <div class="task-modal-list" id="taskModalList"></div>
+</div>
+
+</div><!-- /.app-content -->
+
+</body>
+</html>

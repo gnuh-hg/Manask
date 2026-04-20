@@ -1,0 +1,134 @@
+{
+  "snippets": [
+    {
+      "id": "sidebar-collapse",
+      "title": "Sidebar thu gọn/mở rộng",
+      "category": "sidebar",
+      "file": "sidebar/sidebar-collapse.html",
+      "width": 320,
+      "height": 360,
+      "description": "Sidebar tự động collapse và expand lặp lại.",
+      "tags": ["layout", "animation"]
+    },
+    {
+      "id": "pomodoro-timer",
+      "title": "Pomodoro đếm ngược",
+      "category": "pomodoro",
+      "file": "pomodoro/pomodoro-timer.html",
+      "width": 280,
+      "height": 320,
+      "description": "Đồng hồ tròn SVG đếm ngược, chuyển chế độ Tập trung / Nghỉ.",
+      "tags": ["animation", "timer", "svg"]
+    },
+    {
+      "id": "toast-stack",
+      "title": "Toast notifications",
+      "category": "toast",
+      "file": "toast/toast-stack.html",
+      "width": 340,
+      "height": 220,
+      "description": "4 loại toast slide-in từ phải, tự dismiss lần lượt.",
+      "tags": ["animation", "toast", "notification"]
+    },
+    {
+      "id": "chatbot-bubble",
+      "title": "Chat bubble",
+      "category": "chatbot",
+      "file": "chatbot/chatbot-bubble.html",
+      "width": 300,
+      "height": 360,
+      "description": "Hội thoại tự chạy: user gửi, AI typing rồi trả lời.",
+      "tags": ["animation", "chat", "chatbot"]
+    },
+    {
+      "id": "tasks-list",
+      "title": "Danh sách task",
+      "category": "tasks",
+      "file": "tasks/tasks-list.html",
+      "width": 360,
+      "height": 300,
+      "description": "Task items fade-in staggered, checkbox tick với strikethrough.",
+      "tags": ["animation", "tasks", "list"]
+    },
+    {
+      "id": "tasks-folder-tree",
+      "title": "Folder tree",
+      "category": "tasks",
+      "file": "tasks/tasks-folder-tree.html",
+      "width": 240,
+      "height": 340,
+      "description": "Cây thư mục expand/collapse, highlight project đang chọn.",
+      "tags": ["animation", "tree", "navigation"]
+    },
+    {
+      "id": "tasks-modal-create",
+      "title": "Modal tạo folder",
+      "category": "tasks",
+      "file": "tasks/tasks-modal-create.html",
+      "width": 340,
+      "height": 320,
+      "description": "Modal tạo folder scale-in, nhập tên, chọn màu từ swatches.",
+      "tags": ["animation", "modal", "tasks"]
+    },
+    {
+      "id": "statistics-charts",
+      "title": "Line chart",
+      "category": "statistics",
+      "file": "statistics/statistics-charts.html",
+      "width": 420,
+      "height": 260,
+      "description": "Dual-axis line chart: nhiệm vụ & giờ tập trung vẽ stroke-dashoffset, stat cards count-up.",
+      "tags": ["animation", "line-chart", "svg", "statistics"]
+    },
+    {
+      "id": "statistics-heatmap",
+      "title": "Heatmap hoạt động",
+      "category": "statistics",
+      "file": "statistics/statistics-heatmap.html",
+      "width": 400,
+      "height": 160,
+      "description": "Heatmap activity fill dần từ trái sang phải.",
+      "tags": ["animation", "heatmap", "statistics"]
+    },
+    {
+      "id": "statistics-donut",
+      "title": "Donut chart",
+      "category": "statistics",
+      "file": "statistics/statistics-donut.html",
+      "width": 280,
+      "height": 260,
+      "description": "Donut SVG vẽ arc lần lượt, số tổng count-up.",
+      "tags": ["animation", "chart", "svg", "statistics"]
+    },
+    {
+      "id": "auth-login",
+      "title": "Login form",
+      "category": "auth",
+      "file": "auth/auth-login.html",
+      "width": 320,
+      "height": 360,
+      "description": "Form đăng nhập slide-in, giả lập nhập thông tin, loading state.",
+      "tags": ["animation", "form", "auth"]
+    },
+    {
+      "id": "roadmap-timeline",
+      "title": "Roadmap node graph",
+      "category": "roadmap",
+      "file": "roadmap/roadmap-timeline.html",
+      "width": 420,
+      "height": 200,
+      "description": "DAG tree 6 nodes, BFS animation: node scale-in rồi cạnh bezier vẽ dần.",
+      "tags": ["animation", "graph", "roadmap", "svg"]
+    },
+    {
+      "id": "tasks-task-detail",
+      "title": "Task detail card",
+      "category": "tasks",
+      "file": "tasks/tasks-task-detail.html",
+      "width": 320,
+      "height": 340,
+      "description": "Card task detail float-in, properties xuất hiện staggered.",
+      "tags": ["animation", "card", "tasks"]
+    }
+  ]
+}

@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UI Gallery — Manask</title>
+  <link rel="stylesheet" href="shared/reset.css">
+  <link rel="stylesheet" href="shared/tokens.css">
+  <style>
+    body {
+      background: var(--bg-base);
+      color: var(--text-primary);
+      font-family: var(--font-sans);
+      padding: var(--sp-6);
+      min-height: 100vh;
+    }
+
+    header {
+      margin-bottom: var(--sp-5);
+    }
+    header h1 {
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: var(--sp-1);
+    }
+    header p {
+      color: var(--text-secondary);
+      font-size: 14px;
+    }
+
+    .filters {
+      display: flex;
+      gap: var(--sp-2);
+      margin-bottom: var(--sp-5);
+      flex-wrap: wrap;
+    }
+    .filter-btn {
+      padding: 6px var(--sp-3);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      background: var(--bg-card);
+      color: var(--text-secondary);
+      font-size: 13px;
+      transition: background var(--t-fast), color var(--t-fast), border-color var(--t-fast);
+    }
+    .filter-btn:hover {
+      background: var(--bg-elevated);
+      color: var(--text-primary);
+    }
+    .filter-btn.active {
+      background: var(--accent-subtle);
+      color: var(--accent-primary);
+      border-color: var(--accent-primary);
+      font-weight: 500;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+      gap: var(--sp-5);
+    }
+
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+      transition: border-color var(--t-fast), box-shadow var(--t-fast);
+    }
+    .card:hover {
+      border-color: var(--border-focus);
+      box-shadow: var(--shadow-md);
+    }
+
+    .card-preview {
+      background: var(--bg-surface);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: var(--sp-4);
+    }
+    .card-preview iframe {
+      border: none;
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-md);
+      display: block;
+    }
+
+    .card-body {
+      padding: var(--sp-4);
+      border-top: 1px solid var(--border-subtle);
+    }
+    .card-title {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: var(--sp-1);
+    }
+    .card-desc {
+      color: var(--text-secondary);
+      font-size: 13px;
+      margin-bottom: var(--sp-3);
+      line-height: 1.5;
+    }
+    .card-tags {
+      display: flex;
+      gap: var(--sp-1);
+      flex-wrap: wrap;
+      margin-bottom: var(--sp-3);
+    }
+    .tag {
+      padding: 2px var(--sp-2);
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-xs);
+      font-size: 11px;
+      color: var(--text-tertiary);
+    }
+    .card-actions {
+      display: flex;
+      gap: var(--sp-2);
+    }
+    .btn {
+      padding: 6px var(--sp-3);
+      border-radius: var(--radius-sm);
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-color);
+      font-size: 13px;
+      color: var(--text-primary);
+      text-decoration: none;
+      transition: background var(--t-fast), border-color var(--t-fast);
+    }
+    .btn:hover {
+      background: var(--bg-hover);
+      border-color: var(--border-focus);
+    }
+    .btn.copied {
+      color: var(--color-success);
+      border-color: var(--color-success);
+    }
+
+    .empty {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: var(--sp-6);
+      color: var(--text-tertiary);
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>UI Gallery</h1>
+    <p>Snippet UI illustrations — nhúng qua <code>&lt;iframe&gt;</code> hoặc copy-paste vào docs.</p>
+  </header>
+
+  <div class="filters" id="filters"></div>
+  <div class="grid" id="grid"></div>
+
+  <script>
+    (async function () {
+      let snippets = [];
+      try {
+        const res = await fetch('snippets/manifest.json');
+        ({ snippets } = await res.json());
+      } catch (e) {
+        document.getElementById('grid').innerHTML =
+          '<div class="empty">Không tải được manifest.json.</div>';
+        return;
+      }
+
+      const categories = ['all', ...new Set(snippets.map(s => s.category))];
+      const filtersEl = document.getElementById('filters');
+      const gridEl = document.getElementById('grid');
+      let active = 'all';
+
+      function render() {
+        filtersEl.innerHTML = categories.map(c =>
+          `<button class="filter-btn ${c === active ? 'active' : ''}" data-cat="${c}">${c}</button>`
+        ).join('');
+        filtersEl.querySelectorAll('button').forEach(b => {
+          b.onclick = () => { active = b.dataset.cat; render(); };
+        });
+
+        const list = active === 'all' ? snippets : snippets.filter(s => s.category === active);
+
+        if (list.length === 0) {
+          gridEl.innerHTML = '<div class="empty">Không có snippet nào.</div>';
+          return;
+        }
+
+        gridEl.innerHTML = list.map(s => `
+          <div class="card">
+            <div class="card-preview">
+              <iframe
+                src="snippets/${s.file}"
+                width="${s.width}"
+                height="${s.height}"
+                loading="lazy"
+                scrolling="no"
+                title="${s.title}"
+              ></iframe>
+            </div>
+            <div class="card-body">
+              <div class="card-title">${s.title}</div>
+              ${s.description ? `<div class="card-desc">${s.description}</div>` : ''}
+              ${s.tags?.length ? `<div class="card-tags">${s.tags.map(t => `<span class="tag">${t}</span>`).join('')}</div>` : ''}
+              <div class="card-actions">
+                <button class="btn" data-embed='<iframe src="snippets/${s.file}" width="${s.width}" height="${s.height}" frameborder="0" title="${s.title}"></iframe>'>
+                  Copy embed
+                </button>
+                <a class="btn" href="snippets/${s.file}" target="_blank" rel="noopener">Mở tab mới</a>
+              </div>
+            </div>
+          </div>
+        `).join('');
+
+        gridEl.querySelectorAll('[data-embed]').forEach(btn => {
+          btn.onclick = async () => {
+            await navigator.clipboard.writeText(btn.dataset.embed);
+            btn.textContent = 'Đã copy!';
+            btn.classList.add('copied');
+            setTimeout(() => {
+              btn.textContent = 'Copy embed';
+              btn.classList.remove('copied');
+            }, 1500);
+          };
+        });
+      }
+
+      render();
+    })();
+  </script>
+</body>
+</html>

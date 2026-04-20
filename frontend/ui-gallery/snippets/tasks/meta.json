@@ -1,0 +1,10 @@
+{
+  "category": "tasks",
+  "label": "Tasks",
+  "snippets": [
+    {
+      "id": "tasks-list",
+      "file": "tasks-list.html"
+    }
+  ]
+}

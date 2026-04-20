@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Donut chart</title>
+  <link rel="stylesheet" href="../../shared/reset.css">
+  <link rel="stylesheet" href="../../shared/tokens.css">
+  <style>
+    body {
+      width: 280px;
+      height: 260px;
+      background: transparent;
+      display: flex;
+      flex-direction: column;
+      padding: 14px;
+      box-sizing: border-box;
+      font-family: var(--font-sans);
+      position: relative;
+      transform: perspective(800px) rotateX(3deg) rotateY(-4deg);
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50%      { transform: translateY(-3px); }
+    }
+
+    /* ── Dual glow pools ── */
+    .glow-indigo, .glow-green {
+      position: absolute;
+      width: 40%;
+      height: 55%;
+      top: 28%;
+      filter: blur(26px);
+      pointer-events: none;
+      z-index: 0;
+    }
+    .glow-indigo {
+      left: 4%;
+      background: radial-gradient(ellipse at 50% 50%, rgba(99,102,241,0.22) 0%, transparent 70%);
+    }
+    .glow-green {
+      right: 4%;
+      background: radial-gradient(ellipse at 50% 50%, rgba(52,211,153,0.18) 0%, transparent 70%);
+    }
+
+    /* ── Chip header — lệch phải, float ── */
+    .chip-header {
+      align-self: flex-end;
+      margin-right: 4px;
+      background: var(--bg-elevated);
+      border-radius: var(--radius-md);
+      padding: 5px 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+      position: relative;
+      z-index: 2;
+      margin-bottom: -12px;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.4);
+      animation: float 3s ease-in-out infinite 0s;
+    }
+    .chip-title { font-size: 11.5px; font-weight: 700; color: var(--text-primary); }
+    .chip-sub   { font-size: 9px; color: var(--text-tertiary); }
+
+    .tabs {
+      display: flex;
+      gap: 1px;
+      background: var(--bg-surface);
+      border-radius: var(--radius-sm);
+      padding: 2px;
+    }
+    .tab { font-size: 9px; color: var(--text-secondary); padding: 2px 6px; border-radius: 3px; }
+    .tab.active { background: var(--bg-input); color: var(--text-primary); font-weight: 500; }
+
+    /* ── Content wrap (transparent, fade target) ── */
+    .content-wrap {
+      display: flex;
+      gap: 8px;
+      flex: 1;
+      opacity: 1;
+      transition: opacity 0.4s ease;
+      position: relative;
+      z-index: 1;
+    }
+    .content-wrap.hidden { opacity: 0; }
+
+    /* ── Box donut — chính ── */
+    .box-donut {
+      width: 114px;
+      flex-shrink: 0;
+      background: var(--bg-surface);
+      border-radius: var(--radius-lg);
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      box-shadow: 0 8px 28px rgba(0,0,0,0.5), 0 0 18px rgba(99,102,241,0.2);
+      box-sizing: border-box;
+      animation: float 3s ease-in-out infinite 0.5s;
+    }
+
+    .donut-wrap { position: relative; width: 92px; height: 92px; flex-shrink: 0; }
+    .donut-svg  { width: 92px; height: 92px; transform: rotate(-90deg); overflow: visible; }
+    .donut-track { fill: none; stroke: var(--bg-elevated); stroke-width: 15; }
+
+    .donut-center {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    .center-count { font-size: 20px; font-weight: 700; color: var(--text-primary); line-height: 1; }
+    .center-unit  { font-size: 8px; color: var(--text-secondary); margin-top: 2px; }
+    .center-label { font-size: 8px; color: var(--text-tertiary); margin-top: 1px; }
+
+    .donut-sub {
+      font-size: 9px;
+      color: var(--text-tertiary);
+      text-align: center;
+    }
+
+    /* ── Box legend — phụ, lệch pha ── */
+    .box-legend {
+      flex: 1;
+      background: var(--bg-elevated);
+      border-radius: var(--radius-md);
+      padding: 8px 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+      box-sizing: border-box;
+      animation: float 3s ease-in-out infinite 1.5s;
+    }
+
+    .legend-list { flex: 1; display: flex; flex-direction: column; gap: 3px; }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      opacity: 0;
+      transform: translateX(6px);
+      transition: opacity 0.25s ease, transform 0.25s ease;
+    }
+    .legend-item.visible { opacity: 1; transform: translateX(0); }
+    .legend-dot  { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+    .legend-name { font-size: 9.5px; color: var(--text-secondary); flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .legend-count { font-size: 9.5px; font-weight: 600; color: var(--text-primary); }
+
+    .footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 6px;
+      border-top: 1px solid var(--border-subtle);
+      margin-top: 4px;
+    }
+    .footer-label { font-size: 8.5px; font-weight: 600; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.06em; }
+    .footer-value { font-size: 10.5px; font-weight: 700; color: #818cf8; }
+  </style>
+</head>
+<body>
+
+  <div class="glow-indigo"></div>
+  <div class="glow-green"></div>
+
+  <!-- Chip header -->
+  <div class="chip-header">
+    <div>
+      <div class="chip-title">Phân bổ dự án</div>
+      <div class="chip-sub">Nhiệm vụ</div>
+    </div>
+    <div class="tabs">
+      <div class="tab active">7N</div>
+      <div class="tab">30N</div>
+      <div class="tab">12T</div>
+    </div>
+  </div>
+
+  <!-- Content wrap (fades in/out) -->
+  <div class="content-wrap" id="contentWrap">
+
+    <!-- Box donut -->
+    <div class="box-donut">
+      <div class="donut-wrap">
+        <svg id="donutSvg" class="donut-svg" viewBox="0 0 104 104">
+          <circle class="donut-track" cx="52" cy="52" r="40"/>
+        </svg>
+        <div class="donut-center">
+          <div class="center-count" id="centerCount">0</div>
+          <div class="center-unit">nhiệm vụ</div>
+          <div class="center-label">Tổng</div>
+        </div>
+      </div>
+      <div class="donut-sub">7 ngày qua</div>
+    </div>
+
+    <!-- Box legend -->
+    <div class="box-legend">
+      <div class="legend-list" id="legendContainer"></div>
+      <div class="footer">
+        <div class="footer-label">Tổng</div>
+        <div class="footer-value">42 nv</div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+  (function () {
+    const TOTAL = 42;
+    const SEGMENTS = [
+      { label: 'Công việc', count: 16, color: '#6366f1' },
+      { label: 'Học tập',   count: 12, color: '#34d399' },
+      { label: 'Cá nhân',   count: 7,  color: '#a78bfa' },
+      { label: 'Sức khoẻ',  count: 4,  color: '#fbbf24' },
+      { label: 'Khác',      count: 3,  color: '#94a3b8' },
+    ];
+
+    const R    = 40;
+    const CIRC = 2 * Math.PI * R;
+    const GAP  = (2.2 / 360) * CIRC;
+    const NS   = 'http://www.w3.org/2000/svg';
+    const EASE = 'cubic-bezier(0.4,0,0.2,1)';
+    const ARC_DUR = '0.65s';
+    const STAGGER = 160;
+
+    const legendContainer = document.getElementById('legendContainer');
+    SEGMENTS.forEach((seg, i) => {
+      const div = document.createElement('div');
+      div.className = 'legend-item';
+      div.id = 'leg' + i;
+      div.innerHTML =
+        `<div class="legend-dot" style="background:${seg.color}"></div>` +
+        `<div class="legend-name">${seg.label}</div>` +
+        `<div class="legend-count">${seg.count} nv</div>`;
+      legendContainer.appendChild(div);
+    });
+
+    const svg = document.getElementById('donutSvg');
+    const arcData = [];
+    let cumOffset = 0;
+
+    SEGMENTS.forEach((seg) => {
+      const pct = seg.count / TOTAL;
+      const len = pct * CIRC - GAP;
+      const el  = document.createElementNS(NS, 'circle');
+      el.setAttribute('cx', 52); el.setAttribute('cy', 52); el.setAttribute('r', R);
+      el.setAttribute('fill', 'none');
+      el.setAttribute('stroke', seg.color);
+      el.setAttribute('stroke-width', 15);
+      el.setAttribute('stroke-linecap', 'butt');
+      el.style.strokeDasharray  = `0 ${CIRC}`;
+      el.style.strokeDashoffset = -cumOffset;
+      el.style.transition = 'none';
+      svg.appendChild(el);
+      arcData.push({ el, len });
+      cumOffset += len + GAP;
+    });
+
+    function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+    function resetArcs() {
+      arcData.forEach(a => { a.el.style.transition = 'none'; a.el.style.strokeDasharray = `0 ${CIRC}`; });
+    }
+
+    function revealArcs() {
+      arcData.forEach((a, i) => {
+        setTimeout(() => {
+          a.el.style.transition = `stroke-dasharray ${ARC_DUR} ${EASE}`;
+          void a.el.getBoundingClientRect();
+          a.el.style.strokeDasharray = `${a.len} ${CIRC}`;
+        }, 30 + i * STAGGER);
+      });
+      return 30 + (SEGMENTS.length - 1) * STAGGER + 650 + 80;
+    }
+
+    function countUp(target, duration) {
+      return new Promise(resolve => {
+        const el = document.getElementById('centerCount');
+        el.textContent = '0';
+        const t0 = performance.now();
+        function step(now) {
+          const t    = Math.min(Math.max((now - t0) / duration, 0), 1);
+          const ease = 1 - Math.pow(1 - t, 2);
+          el.textContent = Math.max(0, Math.round(ease * target));
+          if (t < 1) requestAnimationFrame(step);
+          else { el.textContent = target; resolve(); }
+        }
+        requestAnimationFrame(step);
+      });
+    }
+
+    async function runLoop() {
+      const wrap = document.getElementById('contentWrap');
+      const legs = SEGMENTS.map((_, i) => document.getElementById('leg' + i));
+
+      while (true) {
+        wrap.classList.remove('hidden');
+        resetArcs();
+        document.getElementById('centerCount').textContent = '0';
+        legs.forEach(l => l.classList.remove('visible'));
+
+        await sleep(80);
+        const totalMs = revealArcs();
+        await Promise.all([countUp(TOTAL, totalMs), sleep(totalMs)]);
+
+        for (let i = 0; i < SEGMENTS.length; i++) {
+          await sleep(100);
+          legs[i].classList.add('visible');
+        }
+
+        await sleep(2000);
+        wrap.classList.add('hidden');
+        await sleep(600);
+      }
+    }
+
+    setTimeout(runLoop, 300);
+  })();
+  </script>
+</body>
+</html>

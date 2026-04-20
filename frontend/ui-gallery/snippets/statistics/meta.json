@@ -1,0 +1,9 @@
+{
+  "category": "statistics",
+  "snippets": [
+    {
+      "id": "statistics-charts",
+      "file": "statistics-charts.html"
+    }
+  ]
+}

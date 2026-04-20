@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>Roadmap node graph</title>
+<link rel="stylesheet" href="../../shared/reset.css">
+<link rel="stylesheet" href="../../shared/tokens.css">
+<style>
+  body {
+    width: 420px;
+    height: 200px;
+    background: transparent;
+    font-family: var(--font-sans);
+    overflow: hidden;
+    margin: 0;
+    position: relative;
+    transform: perspective(1000px) rotateX(2deg) rotateY(-2deg);
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50%       { transform: translateY(-3px); }
+  }
+
+  /* ── Glow pools (colored per column) ── */
+  .glow-cyan, .glow-indigo, .glow-pink {
+    position: absolute;
+    pointer-events: none;
+    z-index: 0;
+    filter: blur(22px);
+  }
+  .glow-cyan {
+    width: 130px; height: 110px;
+    left: 0; top: 45px;
+    background: radial-gradient(ellipse at 50% 50%, rgba(6,182,212,0.28) 0%, transparent 70%);
+  }
+  .glow-indigo {
+    width: 160px; height: 140px;
+    left: 125px; top: 25px;
+    background: radial-gradient(ellipse at 50% 50%, rgba(139,92,246,0.24) 0%, transparent 70%);
+  }
+  .glow-pink {
+    width: 150px; height: 150px;
+    left: 275px; top: 20px;
+    background: radial-gradient(ellipse at 50% 50%, rgba(244,114,182,0.22) 0%, transparent 70%);
+  }
+
+  /* ── Scene: SVG + nodes float together so arrows stay connected ── */
+  #scene {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    animation: float 3s ease-in-out infinite 0s;
+  }
+
+  /* ── SVG layer (arrows) ── */
+  #svg-layer {
+    position: absolute;
+    inset: 0;
+    width: 420px;
+    height: 200px;
+    pointer-events: none;
+  }
+
+  /* ── Nodes ── */
+  .node {
+    position: absolute;
+    width: 100px;
+    height: 38px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 0 10px;
+    opacity: 0;
+    transform: scale(0.75);
+    transition: opacity 0.28s ease, transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
+  }
+  .node.show { opacity: 1; transform: scale(1); }
+
+  /* Per-column glow shadow */
+  .col0.node.show { box-shadow: 0 0 14px rgba(6,182,212,0.38), 0 4px 14px rgba(0,0,0,0.4); border-color: rgba(6,182,212,0.35); }
+  .col1.node.show { box-shadow: 0 0 14px rgba(139,92,246,0.42), 0 4px 14px rgba(0,0,0,0.4); border-color: rgba(139,92,246,0.35); }
+  .col2.node.show { box-shadow: 0 0 12px rgba(244,114,182,0.38), 0 4px 14px rgba(0,0,0,0.4); border-color: rgba(244,114,182,0.3); }
+
+  /* Active highlight (JS temporary) */
+  .node.active {
+    border-color: var(--accent-primary) !important;
+    box-shadow: 0 0 18px rgba(99,102,241,0.6), 0 4px 16px rgba(0,0,0,0.45) !important;
+  }
+
+  .node-label {
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-bottom: 3px;
+  }
+  .node-title {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-primary);
+    line-height: 1.2;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .col0 .node-label { color: #06b6d4; }
+  .col1 .node-label { color: #8b5cf6; }
+  .col2 .node-label { color: #f472b6; }
+
+  /* ── Arrow paths ── */
+  .edge {
+    fill: none;
+    stroke-width: 1.5;
+    stroke-linecap: round;
+    stroke-dasharray: 300;
+    stroke-dashoffset: 300;
+    transition: stroke-dashoffset 0.45s ease;
+  }
+  .edge.draw { stroke-dashoffset: 0; }
+  .e-c0 { stroke: #06b6d4; }
+  .e-c1 { stroke: #8b5cf6; }
+
+  /* ── Float-progress badge — outside #scene, floats lệch pha ── */
+  .float-progress {
+    position: absolute;
+    left: 10px;
+    bottom: 10px;
+    width: 100px;
+    background: var(--bg-elevated);
+    border: 1px solid rgba(99,102,241,0.2);
+    border-radius: var(--radius-md);
+    padding: 5px 8px;
+    z-index: 3;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.4), 0 0 8px rgba(99,102,241,0.2);
+    animation: float 3s ease-in-out infinite 1.5s;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+  }
+  .float-progress.visible { opacity: 1; }
+  .fp-label {
+    font-size: 9px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: 4px;
+    white-space: nowrap;
+  }
+  .fp-track {
+    height: 4px;
+    background: var(--bg-surface);
+    border-radius: 99px;
+    overflow: hidden;
+  }
+  .fp-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent-primary), #818cf8);
+    border-radius: 99px;
+    width: 0%;
+    transition: width 0.8s cubic-bezier(0.34,1.56,0.64,1);
+  }
+</style>
+</head>
+<body>
+
+  <!-- Glow pools -->
+  <div class="glow-cyan"></div>
+  <div class="glow-indigo"></div>
+  <div class="glow-pink"></div>
+
+  <!-- Float-progress badge (outside scene → floats independently) -->
+  <div class="float-progress" id="floatProgress">
+    <div class="fp-label">4 / 6 hoàn thành</div>
+    <div class="fp-track"><div class="fp-fill" id="fpFill"></div></div>
+  </div>
+
+  <!-- Scene: SVG + nodes move together so arrows stay connected -->
+  <div id="scene">
+
+    <!-- SVG arrows -->
+    <svg id="svg-layer" viewBox="0 0 420 200">
+      <path id="e0" class="edge e-c0" d="M 110 100 C 132 100, 132 38, 155 38"/>
+      <path id="e1" class="edge e-c0" d="M 110 100 C 132 100, 132 162, 155 162"/>
+      <path id="e2" class="edge e-c1" d="M 255 38 C 282 38, 282 38, 310 38"/>
+      <path id="e3" class="edge e-c1" d="M 255 38 C 282 38, 282 100, 310 100"/>
+      <path id="e4" class="edge e-c0" d="M 255 162 C 282 162, 282 162, 310 162"/>
+    </svg>
+
+    <!-- Nodes -->
+    <div id="n0" class="node col0" style="left:10px; top:81px">
+      <span class="node-label">Bắt đầu</span>
+      <span class="node-title">Khởi động</span>
+    </div>
+    <div id="n1" class="node col1" style="left:155px; top:19px">
+      <span class="node-label">Lý thuyết</span>
+      <span class="node-title">Nền tảng CS</span>
+    </div>
+    <div id="n2" class="node col1" style="left:155px; top:143px">
+      <span class="node-label">Thực hành</span>
+      <span class="node-title">Lập trình</span>
+    </div>
+    <div id="n3" class="node col2" style="left:310px; top:19px">
+      <span class="node-label">Nâng cao</span>
+      <span class="node-title">Thuật toán</span>
+    </div>
+    <div id="n4" class="node col2" style="left:310px; top:81px">
+      <span class="node-label">Nâng cao</span>
+      <span class="node-title">Cấu trúc DL</span>
+    </div>
+    <div id="n5" class="node col2" style="left:310px; top:143px">
+      <span class="node-label">Ứng dụng</span>
+      <span class="node-title">Dự án thực tế</span>
+    </div>
+
+  </div>
+
+  <script>
+  (function () {
+    const NODE_APPEAR = 280;
+    const EDGE_DRAW   = 450;
+    const STEP_GAP    = 120;
+
+    const steps = [
+      { nodes: ['n0'], edges: [] },
+      { nodes: ['n1','n2'], edges: ['e0','e1'] },
+      { nodes: ['n3','n4'], edges: ['e2','e3'] },
+      { nodes: ['n5'],      edges: ['e4'] },
+    ];
+
+    const PAUSE_AFTER = 1800;
+    const FADE_TIME   = 400;
+
+    const progressBadge = document.getElementById('floatProgress');
+    const fpFill        = document.getElementById('fpFill');
+
+    function showNode(id, activeMs) {
+      const el = document.getElementById(id);
+      el.classList.add('show', 'active');
+      setTimeout(() => el.classList.remove('active'), activeMs || 600);
+    }
+
+    function drawEdge(id) {
+      document.getElementById(id).classList.add('draw');
+    }
+
+    function hideAll() {
+      ['n0','n1','n2','n3','n4','n5'].forEach(id => {
+        const el = document.getElementById(id);
+        el.style.transition = `opacity ${FADE_TIME}ms ease, transform ${FADE_TIME}ms ease`;
+        el.style.opacity = '0';
+        el.style.transform = 'scale(0.85)';
+      });
+      ['e0','e1','e2','e3','e4'].forEach(id => {
+        const el = document.getElementById(id);
+        el.style.transition = `stroke-dashoffset ${FADE_TIME}ms ease`;
+        el.style.strokeDashoffset = '300';
+      });
+      progressBadge.classList.remove('visible');
+      fpFill.style.width = '0%';
+    }
+
+    function resetAll() {
+      ['n0','n1','n2','n3','n4','n5'].forEach(id => {
+        const el = document.getElementById(id);
+        el.classList.remove('show','active');
+        el.style.transition = '';
+        el.style.opacity = '';
+        el.style.transform = '';
+      });
+      ['e0','e1','e2','e3','e4'].forEach(id => {
+        const el = document.getElementById(id);
+        el.classList.remove('draw');
+        el.style.transition = '';
+        el.style.strokeDashoffset = '';
+      });
+    }
+
+    function runStep(stepIdx, delay) {
+      if (stepIdx >= steps.length) {
+        // Show progress badge after all nodes appear
+        setTimeout(() => {
+          progressBadge.classList.add('visible');
+          setTimeout(() => { fpFill.style.width = '67%'; }, 100);
+        }, 300);
+
+        setTimeout(() => {
+          hideAll();
+          setTimeout(() => { resetAll(); run(); }, FADE_TIME + 150);
+        }, PAUSE_AFTER);
+        return;
+      }
+
+      const step = steps[stepIdx];
+      setTimeout(() => {
+        step.edges.forEach((id, i) => {
+          setTimeout(() => drawEdge(id), i * STEP_GAP);
+        });
+        step.nodes.forEach((id, i) => {
+          setTimeout(() => showNode(id), i * STEP_GAP);
+        });
+        const wait = Math.max(step.nodes.length, step.edges.length) * STEP_GAP + NODE_APPEAR;
+        runStep(stepIdx + 1, wait);
+      }, delay);
+    }
+
+    function run() {
+      runStep(0, 300);
+    }
+
+    run();
+  })();
+  </script>
+</body>
+</html>

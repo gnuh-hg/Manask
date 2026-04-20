@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>About - Manask</title>
+  <link rel="icon" href="../img/logo_web_v2.png" type="image/png">
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/about.css" />
+  <script type="module" src="../js/about.js" defer></script>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <a href="../index.html" class="nav-logo">
+      <img class="logo-web" src="../img/logo_web.png" alt="Logo">
+      Manask
+    </a>
+    <div class="nav-right">
+      <ul class="nav-links">
+        <li><a href="#features" data-i18n="about.nav_features">Tính năng</a></li>
+        <li><a href="#gallery" data-i18n="about.nav_gallery">Giao diện</a></li>
+        <li><a href="#team" data-i18n="about.nav_team">Đội ngũ</a></li>
+        <li><a href="#competition" data-i18n="about.nav_competition">Cuộc thi</a></li>
+        <li><a href="../pages/help.html" data-i18n="about.nav_help">Hỗ trợ</a></li>
+      </ul>
+      <div class="lang-switcher">
+        <button data-lang="vi">VI</button>
+        <button data-lang="en">EN</button>
+      </div>
+      <a class="btn-nav-action" href="../pages/auth.html"></a>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+    <div class="hero-inner">
+      <div class="hero-badge" data-i18n="about.hero_badge">✦ Giới thiệu</div>
+      <h1 class="hero-title">
+        <span data-i18n="about.hero_title">Quản lý công việc</span><br>
+        <span class="gradient-text" data-i18n="about.hero_title_gradient">toàn diện, thông minh</span>
+      </h1>
+      <p class="hero-subtitle" data-i18n="about.hero_subtitle">Manask kết hợp quản lý task theo cấu trúc Folder → Project → Task, Pomodoro timer, AI chatbot, roadmap editor và thống kê chi tiết — tất cả trong một ứng dụng web không cần cài đặt.</p>
+      <div class="hero-stats">
+        <div class="stat-item">
+          <span class="stat-number">8</span>
+          <span class="stat-label" data-i18n="about.hero_stat_features">Tính năng</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number">2</span>
+          <span class="stat-label" data-i18n="about.hero_stat_dev">Developer</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number">EN·VI</span>
+          <span class="stat-label" data-i18n="about.hero_stat_lang">Ngôn ngữ</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURES + GALLERY (gộp) -->
+  <section id="features" style="background: var(--bg-card);">
+    <div style="max-width: 1100px; margin: 0 auto;">
+
+      <!-- Section header -->
+      <div style="text-align: center; max-width: 680px; margin: 0 auto 80px;" class="reveal">
+        <span class="section-tag" data-i18n="about.feat_tag">Tính năng</span>
+        <h2 class="section-title" data-i18n="about.feat_title">Mọi thứ bạn cần, một nơi duy nhất</h2>
+        <p class="section-desc" style="margin: 0 auto;" data-i18n="about.feat_desc">Từ tổ chức công việc, tập trung với Pomodoro, phân tích bằng AI đến theo dõi tiến độ — Manask lo hết.</p>
+      </div>
+
+      <!-- Anchor cho nav_gallery -->
+      <span id="gallery"></span>
+
+      <!-- Row 1: Task Manager (iframe trái, text phải) -->
+      <div class="feature-showcase-item reveal">
+        <div class="feature-showcase-preview">
+          <iframe src="../ui-gallery/snippets/tasks/tasks-list.html" width="360" height="300" frameborder="0" scrolling="no"></iframe>
+        </div>
+        <div class="feature-showcase-text">
+          <div class="feat-icon" style="background: rgba(99,102,241,.12);">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#818cf8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+          </div>
+          <div class="feat-title" data-i18n="about.feat1_title">Task Manager</div>
+          <p class="feat-desc" data-i18n="about.feat1_desc">Cấu trúc 3 cấp Folder → Project → Task. Mỗi task có mức ưu tiên, ngày hạn, ghi chú và time spent. Lọc, sắp xếp và kéo thả tự do.</p>
+        </div>
+      </div>
+
+      <!-- Row 2: Pomodoro Timer (text trái, iframe phải) -->
+      <div class="feature-showcase-item reverse reveal">
+        <div class="feature-showcase-preview">
+          <iframe src="../ui-gallery/snippets/pomodoro/pomodoro-timer.html" width="280" height="320" frameborder="0" scrolling="no"></iframe>
+        </div>
+        <div class="feature-showcase-text">
+          <div class="feat-icon" style="background: rgba(245,158,11,.12);">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          </div>
+          <div class="feat-title" data-i18n="about.feat2_title">Pomodoro Timer</div>
+          <p class="feat-desc" data-i18n="about.feat2_desc">3 chế độ Focus / Short Break / Long Break, hoàn toàn tùy chỉnh thời lượng. Chọn task đang làm, bật đồng hồ, tập trung ngay trong Manask.</p>
+        </div>
+      </div>
+
+      <!-- Row 3: Thống kê (iframe trái, text phải) -->
+      <div class="feature-showcase-item reveal">
+        <div class="feature-showcase-preview">
+          <iframe src="../ui-gallery/snippets/statistics/statistics-charts.html" width="420" height="260" frameborder="0" scrolling="no"></iframe>
+        </div>
+        <div class="feature-showcase-text">
+          <div class="feat-icon" style="background: rgba(34,197,94,.12);">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="4"/><line x1="12" y1="20" x2="12" y2="10"/><line x1="6" y1="20" x2="6" y2="16"/></svg>
+          </div>
+          <div class="feat-title" data-i18n="about.feat3_title">Thống kê Trực quan</div>
+          <p class="feat-desc" data-i18n="about.feat3_desc">Heatmap 365 ngày, Line chart xu hướng 7 ngày / 30 ngày / 12 tháng, Donut chart phân bổ task theo project và tóm tắt tổng quan.</p>
+        </div>
+      </div>
+
+      <!-- Row 4: AI Chatbot (text trái, iframe phải) -->
+      <div class="feature-showcase-item reverse reveal">
+        <div class="feature-showcase-preview">
+          <iframe src="../ui-gallery/snippets/chatbot/chatbot-bubble.html" width="300" height="360" frameborder="0" scrolling="no"></iframe>
+        </div>
+        <div class="feature-showcase-text">
+          <div class="feat-icon" style="background: rgba(6,182,212,.12);">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#06b6d4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          </div>
+          <div class="feat-title" data-i18n="about.feat4_title">AI Chatbot</div>
+          <p class="feat-desc" data-i18n="about.feat4_desc">Trợ lý AI hiểu ngữ cảnh workspace. Tạo roadmap node-based, cây folder-project-task và phân tích khối lượng công việc — lưu thẳng vào app chỉ một nút.</p>
+        </div>
+      </div>
+
+      <!-- Row 5: Roadmap Editor (iframe trái, text phải) -->
+      <div class="feature-showcase-item reveal">
+        <div class="feature-showcase-preview">
+          <iframe src="../ui-gallery/snippets/roadmap/roadmap-timeline.html" width="420" height="200" frameborder="0" scrolling="no"></iframe>
+        </div>
+        <div class="feature-showcase-text">
+          <div class="feat-icon" style="background: rgba(139,92,246,.12);">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="6" y1="3" x2="6" y2="15"/><circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M18 9a9 9 0 0 1-9 9"/></svg>
+          </div>
+          <div class="feat-title" data-i18n="about.feat5_title">Roadmap Editor</div>
+          <p class="feat-desc" data-i18n="about.feat5_desc">Soạn thảo roadmap dạng node-based canvas. Kết nối milestone, kéo thả bố cục, tùy chỉnh nhãn kết nối. Tạo từ AI hoặc tự xây từ đầu.</p>
+        </div>
+      </div>
+
+      <!-- Sub-header "Và còn nữa" -->
+      <div class="feat-more-divider reveal" data-i18n="about.feat_more_tag">Và còn nữa</div>
+
+      <!-- Compact grid: 3 features không có snippet -->
+      <div class="feature-compact-grid reveal">
+
+        <div class="feature-card indigo">
+          <div class="feature-icon icon-indigo">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="1" y1="1" x2="23" y2="23"/><path d="M16.72 11.06A10.94 10.94 0 0 1 19 12.55"/><path d="M5 12.55a10.94 10.94 0 0 1 5.17-2.39"/><path d="M10.71 5.05A16 16 0 0 1 22.56 9"/><path d="M1.42 9a15.91 15.91 0 0 1 4.7-2.88"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><line x1="12" y1="20" x2="12.01" y2="20"/></svg>
+          </div>
+          <div class="feature-title" data-i18n="about.feat6_title">Hỗ trợ Offline</div>
+          <div class="feature-desc" data-i18n="about.feat6_desc">IndexedDB lưu dữ liệu cục bộ. Request offline được xếp hàng và tự đồng bộ về server khi kết nối phục hồi.</div>
+        </div>
+
+        <div class="feature-card amber">
+          <div class="feature-icon icon-amber">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+          </div>
+          <div class="feature-title" data-i18n="about.feat7_title">Đa Ngôn ngữ</div>
+          <div class="feature-desc" data-i18n="about.feat7_desc">Toàn bộ giao diện song ngữ Tiếng Anh / Tiếng Việt. Chuyển đổi tức thì từ sidebar, lưu tự động theo tài khoản.</div>
+        </div>
+
+        <div class="feature-card green">
+          <div class="feature-icon icon-green">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          </div>
+          <div class="feature-title" data-i18n="about.feat8_title">Tài khoản &amp; Đồng bộ</div>
+          <div class="feature-desc" data-i18n="about.feat8_desc">Đăng ký và đăng nhập bảo mật. Toàn bộ folder, project và task được lưu trên server và đồng bộ riêng theo từng tài khoản.</div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- TEAM -->
+  <section id="team" style="background: var(--bg-card);">
+    <div class="team-section">
+      <div class="team-header reveal">
+        <span class="section-tag" data-i18n="about.team_tag">Đội ngũ</span>
+        <h2 class="section-title" data-i18n="about.team_title">Những người đứng sau Manask</h2>
+        <p class="section-desc" style="margin: 0 auto;" data-i18n-html="about.team_desc">Team <strong>2T - Plain Sailing</strong>, hai học sinh với một mục tiêu: xây dựng công cụ quản lý công việc thực sự hữu ích.</p>
+      </div>
+      <div class="team-grid">
+        <div class="team-card reveal">
+          <div class="team-avatar" style="background: linear-gradient(135deg, #6366f1, #a78bfa);">H</div>
+          <div class="team-name">Nguyễn Mạnh Hùng</div>
+          <div class="team-role role-frontend">Frontend Developer</div>
+          <div class="team-bio" data-i18n="about.team_member1_bio">Thiết kế và xây dựng toàn bộ giao diện người dùng — từ layout, design system đến animation và tương tác.</div>
+        </div>
+        <div class="team-card reveal" style="transition-delay: .15s">
+          <div class="team-avatar" style="background: linear-gradient(135deg, #06b6d4, #6366f1);">B</div>
+          <div class="team-name">Nguyễn Phú Bình</div>
+          <div class="team-role role-backend">Backend Developer</div>
+          <div class="team-bio" data-i18n="about.team_member2_bio">Xây dựng hệ thống server, API RESTful và cơ sở dữ liệu — đảm bảo mọi tính năng vận hành ổn định và bảo mật.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- COMPETITION -->
+  <section class="competition-section" id="competition">
+    <div class="competition-inner reveal">
+      <div class="competition-logo">FPT</div>
+      <span class="section-tag" style="display: block; margin-bottom: 16px;" data-i18n="about.comp_tag">Cuộc thi</span>
+      <h2 class="section-title" style="margin-bottom: 20px;">AI Young Guru by FPT</h2>
+      <p class="competition-quote" data-i18n="about.comp_quote">Chúng tôi tham gia AI Young Guru không chỉ để tranh giải, mà để chứng minh rằng công nghệ AI kết hợp với thiết kế tốt có thể tạo ra công cụ thực sự thay đổi cách con người làm việc.</p>
+      <div class="competition-meta">
+        <div class="comp-chip">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"/></svg>
+          <span>AI Young Guru</span> - FPT Corporation
+        </div>
+        <div class="comp-chip">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+          <span>Web Application</span> Track
+        </div>
+        <div class="comp-chip">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          Team <span>2T - Plain Sailing</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div>© 2026 <strong>Manask</strong> — Team 2T - Plain Sailing</div>
+    <div>Built for <strong>AI Young Guru · FPT</strong></div>
+  </footer>
+
+</body>
+</html>

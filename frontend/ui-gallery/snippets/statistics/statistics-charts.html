@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Line chart</title>
+  <link rel="stylesheet" href="../../shared/reset.css">
+  <link rel="stylesheet" href="../../shared/tokens.css">
+  <style>
+    body {
+      width: 420px;
+      height: 260px;
+      background: transparent;
+      display: flex;
+      flex-direction: column;
+      padding: 14px;
+      box-sizing: border-box;
+      font-family: var(--font-sans);
+      position: relative;
+      transform: perspective(900px) rotateX(2deg) rotateY(-3deg);
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50%      { transform: translateY(-3px); }
+    }
+
+    /* ── Dual glow pools ── */
+    .glow-indigo, .glow-green {
+      position: absolute;
+      width: 38%;
+      height: 60%;
+      top: 28%;
+      pointer-events: none;
+      z-index: 0;
+      filter: blur(28px);
+    }
+    .glow-indigo {
+      left: 4%;
+      background: radial-gradient(ellipse at 50% 50%, rgba(99,102,241,0.2) 0%, transparent 70%);
+    }
+    .glow-green {
+      right: 4%;
+      background: radial-gradient(ellipse at 50% 50%, rgba(34,197,94,0.15) 0%, transparent 70%);
+    }
+
+    /* ── Box header — lệch trái, float ── */
+    .box-header {
+      width: 58%;
+      align-self: flex-end;
+      margin-right: 6px;
+      background: var(--bg-elevated);
+      border-radius: var(--radius-md);
+      padding: 7px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-shrink: 0;
+      position: relative;
+      z-index: 2;
+      margin-bottom: -14px;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.4);
+      animation: float 3s ease-in-out infinite;
+    }
+
+    .hdr-title   { font-size: 12px; font-weight: 700; color: var(--text-primary); }
+    .hdr-sub     { font-size: 9px; color: var(--text-tertiary); margin-top: 1px; }
+
+    .tabs {
+      display: flex;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+    .tab {
+      font-size: 9.5px;
+      color: var(--text-secondary);
+      padding: 3px 8px;
+      border-right: 1px solid var(--border-color);
+      line-height: 1.4;
+    }
+    .tab:last-child { border-right: none; }
+    .tab.active { background: var(--accent-primary); color: #fff; font-weight: 500; }
+
+    /* ── Box chart — anchor ── */
+    .box-chart {
+      width: 100%;
+      flex: 1;
+      background: var(--bg-surface);
+      border-radius: var(--radius-lg);
+      padding: 14px 14px 8px;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      z-index: 1;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.55), 0 0 20px rgba(99,102,241,0.16);
+      box-sizing: border-box;
+      overflow: hidden;
+      animation: float 3s ease-in-out infinite 1.5s;
+    }
+
+    /* ── Legend ── */
+    .legend-row  { display: flex; gap: 10px; align-items: center; margin-bottom: 6px; }
+    .leg-item    { display: flex; align-items: center; gap: 4px; font-size: 9px; color: var(--text-secondary); }
+    .leg-line    { width: 14px; height: 2px; border-radius: 1px; }
+
+    /* ── Stat cards ── */
+    .cards-row { display: flex; gap: 6px; margin-bottom: 6px; }
+    .card {
+      flex: 1;
+      background: var(--bg-elevated);
+      border-radius: var(--radius-sm);
+      padding: 5px 8px;
+    }
+    .card-label { font-size: 8.5px; font-weight: 600; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 1px; }
+    .card-value { font-size: 17px; font-weight: 700; line-height: 1.1; margin-bottom: 1px; }
+    .card-trend { font-size: 8.5px; color: var(--color-success); }
+
+    /* ── Fade ── */
+    .fadeable { opacity: 1; transition: opacity 0.4s ease; }
+    .fadeable.hidden { opacity: 0; }
+
+    /* ── Chart section ── */
+    .chart-section { display: flex; gap: 4px; flex: 1; min-height: 0; }
+
+    .y-axis {
+      display: flex;
+      flex-direction: column-reverse;
+      justify-content: space-between;
+      padding-bottom: 14px;
+    }
+    .y-label { font-size: 7.5px; color: var(--text-tertiary); line-height: 1; }
+    .y-left  { width: 16px; text-align: right; }
+    .y-right { width: 22px; text-align: left; }
+
+    .chart-mid { flex: 1; display: flex; flex-direction: column; min-height: 0; }
+    .svg-wrap  { flex: 1; min-height: 0; }
+    .chart-svg { width: 100%; height: 100%; display: block; }
+
+    .x-labels  { display: flex; justify-content: space-between; padding-top: 3px; height: 14px; }
+    .x-label   { font-size: 7.5px; color: var(--text-tertiary); text-align: center; }
+
+    /* ── SVG elements ── */
+    .grid-line  { stroke: var(--border-subtle); stroke-width: 1; }
+    .area-tasks { fill: url(#gradT); }
+    .area-focus { fill: url(#gradF); }
+    .lp { fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .lp-t { stroke: #6366f1; }
+    .lp-f { stroke: #22c55e; }
+    .dot-t { fill: #6366f1; }
+    .dot-f { fill: #22c55e; }
+  </style>
+</head>
+<body>
+
+  <div class="glow-indigo"></div>
+  <div class="glow-green"></div>
+
+  <!-- Box header -->
+  <div class="box-header">
+    <div>
+      <div class="hdr-title">Năng suất làm việc</div>
+      <div class="hdr-sub">Nhiệm vụ &amp; Giờ tập trung</div>
+    </div>
+    <div class="tabs">
+      <div class="tab active">Tuần</div>
+      <div class="tab">Tháng</div>
+      <div class="tab">Năm</div>
+    </div>
+  </div>
+
+  <!-- Box chart -->
+  <div class="box-chart">
+
+    <!-- Legend -->
+    <div class="legend-row">
+      <div class="leg-item"><div class="leg-line" style="background:#6366f1"></div>Nhiệm vụ</div>
+      <div class="leg-item"><div class="leg-line" style="background:#22c55e"></div>Giờ tập trung</div>
+    </div>
+
+    <!-- Stat cards -->
+    <div class="cards-row fadeable" id="cards">
+      <div class="card">
+        <div class="card-label">Tổng nhiệm vụ</div>
+        <div class="card-value" id="cardT" style="color:#818cf8">0</div>
+        <div class="card-trend">↑ so với kỳ trước</div>
+      </div>
+      <div class="card">
+        <div class="card-label">Giờ tập trung</div>
+        <div class="card-value" id="cardF" style="color:#4ade80">0h</div>
+        <div class="card-trend">↑ so với kỳ trước</div>
+      </div>
+    </div>
+
+    <!-- Chart -->
+    <div class="chart-section fadeable" id="chartSection">
+      <div class="y-axis" id="yLeft"></div>
+      <div class="chart-mid">
+        <div class="svg-wrap">
+          <svg id="lcSvg" class="chart-svg" viewBox="0 0 320 70" preserveAspectRatio="none">
+            <defs>
+              <linearGradient id="gradT" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%"   stop-color="#6366f1" stop-opacity="0.25"/>
+                <stop offset="100%" stop-color="#6366f1" stop-opacity="0"/>
+              </linearGradient>
+              <linearGradient id="gradF" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%"   stop-color="#22c55e" stop-opacity="0.18"/>
+                <stop offset="100%" stop-color="#22c55e" stop-opacity="0"/>
+              </linearGradient>
+            </defs>
+            <g id="lcGrid"></g>
+            <path id="lcAreaT" class="area-tasks" opacity="0"/>
+            <path id="lcAreaF" class="area-focus" opacity="0"/>
+            <path id="lcLineT" class="lp lp-t"/>
+            <path id="lcLineF" class="lp lp-f"/>
+            <g id="lcDots"></g>
+          </svg>
+        </div>
+        <div class="x-labels" id="xLabels"></div>
+      </div>
+      <div class="y-axis" id="yRight"></div>
+    </div>
+
+  </div>
+
+  <script>
+  (function () {
+    const DATA = {
+      tasks:  [1, 19, 3, 3, 1, 0, 0],
+      focus:  [0, 0, 19, 20, 0, 0, 0],
+      labels: ['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN']
+    };
+
+    const W = 320, H = 70;
+    const PT = 4, PB = 3;
+    const PH = H - PT - PB;
+    const N  = DATA.labels.length;
+    const YM = 20, STEPS = 4;
+
+    const xp = i => (i / (N - 1)) * W;
+    const yp = v  => PT + PH - (v / YM) * PH;
+
+    const ptsT = DATA.tasks.map((v, i) => ({ x: xp(i), y: yp(v) }));
+    const ptsF = DATA.focus.map((v, i) => ({ x: xp(i), y: yp(v) }));
+
+    const mkLine = pts => pts.map((p, i) => `${i === 0 ? 'M' : 'L'}${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' ');
+    const bot    = PT + PH;
+    const mkArea = pts => mkLine(pts) + ` L${pts.at(-1).x.toFixed(1)},${bot} L${pts[0].x.toFixed(1)},${bot} Z`;
+
+    const grid = document.getElementById('lcGrid');
+    for (let s = 0; s <= STEPS; s++) {
+      const y = yp((YM / STEPS) * s);
+      const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+      line.setAttribute('x1', 0); line.setAttribute('x2', W);
+      line.setAttribute('y1', y); line.setAttribute('y2', y);
+      line.setAttribute('class', 'grid-line');
+      grid.appendChild(line);
+    }
+
+    document.getElementById('lcAreaT').setAttribute('d', mkArea(ptsT));
+    document.getElementById('lcAreaF').setAttribute('d', mkArea(ptsF));
+    document.getElementById('lcLineT').setAttribute('d', mkLine(ptsT));
+    document.getElementById('lcLineF').setAttribute('d', mkLine(ptsF));
+
+    const dotsEl = document.getElementById('lcDots');
+    ptsT.forEach(p => {
+      const c = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+      c.setAttribute('cx', p.x); c.setAttribute('cy', p.y); c.setAttribute('r', 3);
+      c.setAttribute('class', 'dot-t'); c.style.opacity = 0;
+      dotsEl.appendChild(c);
+    });
+    ptsF.forEach(p => {
+      const c = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+      c.setAttribute('cx', p.x); c.setAttribute('cy', p.y); c.setAttribute('r', 3);
+      c.setAttribute('class', 'dot-f'); c.style.opacity = 0;
+      dotsEl.appendChild(c);
+    });
+
+    const yLeft = document.getElementById('yLeft');
+    for (let s = 0; s <= STEPS; s++) {
+      const d = document.createElement('div');
+      d.className = 'y-label y-left';
+      d.textContent = (YM / STEPS) * s;
+      yLeft.appendChild(d);
+    }
+
+    const yRight = document.getElementById('yRight');
+    for (let s = 0; s <= STEPS; s++) {
+      const d = document.createElement('div');
+      d.className = 'y-label y-right';
+      d.textContent = (YM / STEPS) * s + 'h';
+      yRight.appendChild(d);
+    }
+
+    const xLabels = document.getElementById('xLabels');
+    DATA.labels.forEach(lbl => {
+      const d = document.createElement('div');
+      d.className = 'x-label';
+      d.textContent = lbl;
+      xLabels.appendChild(d);
+    });
+
+    function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+    function animateLine(pathEl, dur, delayMs) {
+      return new Promise(resolve => {
+        setTimeout(() => {
+          pathEl.style.transition = 'none';
+          pathEl.style.strokeDasharray  = 'none';
+          pathEl.style.strokeDashoffset = '0';
+          requestAnimationFrame(() => {
+            const len = pathEl.getTotalLength();
+            pathEl.style.strokeDasharray  = len;
+            pathEl.style.strokeDashoffset = len;
+            pathEl.getBoundingClientRect();
+            pathEl.style.transition = `stroke-dashoffset ${dur}ms cubic-bezier(0.4,0,0.2,1)`;
+            pathEl.style.strokeDashoffset = '0';
+            setTimeout(resolve, dur);
+          });
+        }, delayMs);
+      });
+    }
+
+    function countUp(el, target, label, duration) {
+      el.textContent = '0' + label;
+      const t0 = performance.now();
+      return new Promise(resolve => {
+        function step(now) {
+          const t    = Math.min(Math.max((now - t0) / duration, 0), 1);
+          const ease = 1 - Math.pow(1 - t, 2);
+          el.textContent = Math.max(0, Math.round(ease * target)) + label;
+          if (t < 1) requestAnimationFrame(step);
+          else { el.textContent = target + label; resolve(); }
+        }
+        requestAnimationFrame(step);
+      });
+    }
+
+    function resetLines() {
+      ['lcLineT', 'lcLineF'].forEach(id => {
+        const el = document.getElementById(id);
+        el.style.transition = 'none';
+        el.style.strokeDashoffset = el.getTotalLength?.() || 9999;
+      });
+      ['lcAreaT', 'lcAreaF'].forEach(id => {
+        const el = document.getElementById(id);
+        el.style.transition = 'none';
+        el.setAttribute('opacity', 0);
+      });
+      dotsEl.querySelectorAll('circle').forEach(c => {
+        c.style.transition = 'none';
+        c.style.opacity = 0;
+      });
+    }
+
+    async function runLoop() {
+      const cards  = document.getElementById('cards');
+      const chart  = document.getElementById('chartSection');
+      const cardT  = document.getElementById('cardT');
+      const cardF  = document.getElementById('cardF');
+      const areaT  = document.getElementById('lcAreaT');
+      const areaF  = document.getElementById('lcAreaF');
+      const dots   = dotsEl.querySelectorAll('circle');
+      const totalT = DATA.tasks.reduce((a, b) => a + b, 0);
+      const totalF = DATA.focus.reduce((a, b) => a + b, 0);
+
+      while (true) {
+        cards.classList.remove('hidden');
+        chart.classList.remove('hidden');
+        cardT.textContent = '0';
+        cardF.textContent = '0h';
+        resetLines();
+        await sleep(100);
+
+        const lineDur = 900;
+        await Promise.all([
+          countUp(cardT, totalT, '',  lineDur),
+          countUp(cardF, totalF, 'h', lineDur),
+          animateLine(document.getElementById('lcLineT'), lineDur, 0),
+          animateLine(document.getElementById('lcLineF'), lineDur, 200)
+        ]);
+
+        [areaT, areaF].forEach(el => {
+          el.style.transition = 'opacity 0.5s ease';
+          el.setAttribute('opacity', 1);
+        });
+
+        await sleep(200);
+        dots.forEach(c => { c.style.transition = 'opacity 0.3s ease'; c.style.opacity = 1; });
+
+        await sleep(2200);
+        cards.classList.add('hidden');
+        chart.classList.add('hidden');
+        await sleep(600);
+      }
+    }
+
+    setTimeout(runLoop, 300);
+  })();
+  </script>
+</body>
+</html>

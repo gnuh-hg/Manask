@@ -1,0 +1,11 @@
+{
+  "category": "auth",
+  "snippets": [
+    {
+      "id": "auth-login",
+      "file": "auth-login.html",
+      "title": "Login form",
+      "description": "Form đăng nhập slide-in, typewriter nhập email/password, loading state."
+    }
+  ]
+}

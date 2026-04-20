@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Task detail card</title>
+  <link rel="stylesheet" href="../../shared/reset.css">
+  <link rel="stylesheet" href="../../shared/tokens.css">
+  <style>
+    body {
+      width: 320px;
+      height: 340px;
+      background: transparent;
+      display: flex;
+      flex-direction: column;
+      padding: 14px;
+      box-sizing: border-box;
+      font-family: var(--font-sans);
+      position: relative;
+      transform: perspective(700px) rotateX(3deg) rotateY(-4deg);
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50%      { transform: translateY(-3px); }
+    }
+    @keyframes fadeIn { to { opacity: 1; } }
+
+    /* ── Glow pool ── */
+    .glow-pool {
+      position: absolute;
+      width: 55%;
+      height: 50%;
+      left: 20%;
+      top: 28%;
+      background: radial-gradient(ellipse at 50% 50%, rgba(99,102,241,0.22) 0%, transparent 70%);
+      filter: blur(26px);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── Scene container (JS opacity target) ── */
+    #card {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ── Box header — lệch trái, float 0s ── */
+    .box-header {
+      width: 82%;
+      align-self: flex-start;
+      margin-left: 4px;
+      background: var(--bg-elevated);
+      border-radius: var(--radius-md);
+      padding: 8px 12px;
+      flex-shrink: 0;
+      position: relative;
+      z-index: 2;
+      margin-bottom: -14px;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.4);
+      animation: float 3s ease-in-out infinite 0s;
+    }
+    .hdr-label {
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      color: var(--text-tertiary);
+      text-transform: uppercase;
+      margin-bottom: 2px;
+      opacity: 0;
+      animation: fadeIn 0.25s ease forwards 0.45s;
+    }
+    .hdr-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 4px;
+      opacity: 0;
+      animation: fadeIn 0.25s ease forwards 0.5s;
+    }
+    .hdr-due {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 10px;
+      color: var(--accent-primary);
+      opacity: 0;
+      animation: fadeIn 0.25s ease forwards 0.55s;
+    }
+
+    /* ── Box body — full width, float 1s ── */
+    .box-body {
+      width: 100%;
+      background: var(--bg-surface);
+      border-radius: var(--radius-lg);
+      padding: 18px 12px 10px;
+      flex: 1;
+      position: relative;
+      z-index: 1;
+      box-shadow: 0 8px 28px rgba(0,0,0,0.5), 0 0 18px rgba(99,102,241,0.18);
+      box-sizing: border-box;
+      margin-bottom: -12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      animation: float 3s ease-in-out infinite 1s;
+      overflow: hidden;
+    }
+
+    /* Progress */
+    .progress-block {
+      background: var(--bg-card);
+      border-radius: var(--radius-md);
+      padding: 8px 10px;
+      opacity: 0;
+      animation: fadeIn 0.25s ease forwards 0.58s;
+    }
+    .progress-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 6px;
+    }
+    .progress-label {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 9.5px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+    }
+    .progress-label svg { color: var(--accent-primary); }
+    .progress-pct { font-size: 12px; font-weight: 700; color: var(--accent-primary); }
+    .progress-track {
+      height: 5px;
+      background: var(--bg-elevated);
+      border-radius: 99px;
+      position: relative;
+      overflow: visible;
+    }
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent-primary), #818cf8);
+      border-radius: 99px;
+      width: 0%;
+      transition: width 0.8s cubic-bezier(0.34,1.56,0.64,1);
+    }
+    .progress-thumb {
+      position: absolute;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: 12px;
+      height: 12px;
+      background: var(--accent-primary);
+      border: 2px solid var(--bg-surface);
+      border-radius: 50%;
+      box-shadow: 0 0 6px rgba(99,102,241,0.6);
+      transition: left 0.8s cubic-bezier(0.34,1.56,0.64,1);
+      left: 0%;
+    }
+
+    /* Props */
+    .props {
+      background: var(--bg-card);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      flex: 1;
+    }
+    .prop-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 7px 10px;
+      border-bottom: 1px solid var(--border-subtle);
+      opacity: 0;
+      animation: fadeIn 0.2s ease forwards;
+    }
+    .prop-row:last-child { border-bottom: none; }
+    .prop-left {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--text-secondary);
+      font-size: 11px;
+    }
+    .badge-high {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      background: rgba(239,68,68,0.15);
+      color: #ef4444;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      padding: 2px 7px;
+      border-radius: var(--radius-sm);
+    }
+    .badge-dot { width: 5px; height: 5px; background: #ef4444; border-radius: 50%; }
+    .date-badge {
+      background: var(--bg-elevated);
+      color: var(--accent-primary);
+      font-size: 10px;
+      font-weight: 500;
+      padding: 2px 7px;
+      border-radius: var(--radius-sm);
+      border: 1px solid rgba(99,102,241,0.2);
+    }
+    .time-val { font-size: 11px; font-weight: 500; color: var(--text-secondary); }
+
+    /* ── Box tags — lệch phải, float 1.5s ── */
+    .box-tags {
+      width: 75%;
+      align-self: flex-end;
+      margin-right: 4px;
+      background: var(--bg-elevated);
+      border-radius: var(--radius-md);
+      padding: 7px 12px;
+      flex-shrink: 0;
+      position: relative;
+      z-index: 2;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.4);
+      animation: float 3s ease-in-out infinite 1.5s;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      opacity: 0;
+      animation: float 3s ease-in-out infinite 1.5s, fadeIn 0.2s ease forwards 1.12s;
+    }
+    .notes-mini {
+      font-size: 10px;
+      color: var(--text-tertiary);
+      flex: 1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .delete-btn {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      background: transparent;
+      border: none;
+      color: var(--text-tertiary);
+      font-size: 10px;
+      font-family: var(--font-sans);
+      cursor: default;
+      flex-shrink: 0;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="glow-pool"></div>
+
+  <div id="card">
+
+    <!-- Box header -->
+    <div class="box-header">
+      <div class="hdr-label">Chi tiết công việc</div>
+      <div class="hdr-title">Chuẩn bị bài thuyết trình</div>
+      <div class="hdr-due">
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        Hết hạn: 30/04/2026
+      </div>
+    </div>
+
+    <!-- Box body -->
+    <div class="box-body">
+      <!-- Progress -->
+      <div class="progress-block">
+        <div class="progress-header">
+          <span class="progress-label">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+            Tiến độ
+          </span>
+          <span class="progress-pct" id="pct-label">0%</span>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill" id="progress-fill"></div>
+          <div class="progress-thumb" id="progress-thumb"></div>
+        </div>
+      </div>
+
+      <!-- Props -->
+      <div class="props">
+        <div class="prop-row" style="animation-delay:0.72s">
+          <span class="prop-left">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            Độ ưu tiên
+          </span>
+          <span class="badge-high"><span class="badge-dot"></span>CAO</span>
+        </div>
+        <div class="prop-row" style="animation-delay:0.80s">
+          <span class="prop-left">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            Ngày bắt đầu
+          </span>
+          <span class="date-badge">22/04/2026</span>
+        </div>
+        <div class="prop-row" style="animation-delay:0.88s">
+          <span class="prop-left">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            Thời gian đã dùng
+          </span>
+          <span class="time-val">2.00 h</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Box tags -->
+    <div class="box-tags">
+      <span class="notes-mini">Làm slide cho buổi review cuối tháng.</span>
+      <button class="delete-btn">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+        Xóa
+      </button>
+    </div>
+
+  </div>
+
+  <script>
+  (function () {
+    const PROGRESS = 45;
+    const fill  = document.getElementById('progress-fill');
+    const thumb = document.getElementById('progress-thumb');
+    const label = document.getElementById('pct-label');
+    const card  = document.getElementById('card');
+
+    function runProgress() {
+      let cur = 0;
+      const step = () => {
+        cur = Math.min(cur + 1, PROGRESS);
+        fill.style.width  = cur + '%';
+        thumb.style.left  = cur + '%';
+        label.textContent = cur + '%';
+        if (cur < PROGRESS) requestAnimationFrame(step);
+      };
+      setTimeout(() => requestAnimationFrame(step), 600);
+    }
+
+    function reset() {
+      fill.style.transition  = 'none';
+      thumb.style.transition = 'none';
+      fill.style.width  = '0%';
+      thumb.style.left  = '0%';
+      label.textContent = '0%';
+      card.style.transition = 'opacity 0.4s ease';
+      card.style.opacity = '0';
+
+      setTimeout(() => {
+        fill.style.transition  = 'width 0.8s cubic-bezier(0.34,1.56,0.64,1)';
+        thumb.style.transition = 'left  0.8s cubic-bezier(0.34,1.56,0.64,1)';
+        card.style.opacity    = '1';
+        card.style.transition = '';
+
+        document.querySelectorAll('.hdr-label, .hdr-title, .hdr-due, .progress-block, .prop-row, .box-tags').forEach(el => {
+          el.style.animation = 'none';
+          void el.offsetWidth;
+          el.style.animation = '';
+        });
+
+        runProgress();
+      }, 500);
+    }
+
+    runProgress();
+
+    setInterval(() => {
+      card.style.transition = 'opacity 0.4s ease';
+      card.style.opacity    = '0';
+      setTimeout(reset, 450);
+    }, 4500);
+  })();
+  </script>
+</body>
+</html>

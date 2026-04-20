@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Toast notifications</title>
+  <link rel="stylesheet" href="../../shared/reset.css">
+  <link rel="stylesheet" href="../../shared/tokens.css">
+  <style>
+    body {
+      width: 340px;
+      height: 220px;
+      background: transparent;
+      font-family: var(--font-sans);
+      color: var(--text-primary);
+      display: flex;
+      align-items: flex-end;
+      justify-content: flex-end;
+      padding: 16px;
+      box-sizing: border-box;
+      position: relative;
+    }
+
+    /* ── Skeleton context — page content phía sau toasts ── */
+    .skeleton {
+      position: absolute;
+      top: 16px;
+      left: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .sk-line {
+      height: 8px;
+      background: var(--bg-elevated);
+      border-radius: var(--radius-xs);
+      opacity: 0.35;
+    }
+
+    /* ── Float wrapper — tách khỏi slide animation ── */
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50%      { transform: translateY(-3px); }
+    }
+
+    .toast-wrap {
+      animation: float 3s ease-in-out infinite;
+    }
+
+    /* ── Toast ── */
+    .toast-container {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      align-items: flex-end;
+      position: relative;
+      z-index: 1;
+    }
+
+    .toast {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      width: 240px;
+      opacity: 0;
+      transform: translateX(110%);
+    }
+
+    .toast-icon {
+      width: 18px;
+      height: 18px;
+      flex-shrink: 0;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .toast-text {
+      font-size: 12px;
+      line-height: 1.4;
+      flex: 1;
+    }
+    .toast-text strong { display: block; font-weight: 500; }
+
+    .toast-close {
+      color: var(--text-tertiary);
+      font-size: 13px;
+      line-height: 1;
+      flex-shrink: 0;
+    }
+
+    /* Type colors + glow */
+    .toast.success {
+      border-left: 3px solid #22c55e;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.45), 0 0 12px rgba(34,197,94,0.25);
+    }
+    .toast.info {
+      border-left: 3px solid #3b82f6;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.45), 0 0 12px rgba(59,130,246,0.25);
+    }
+    .toast.warning {
+      border-left: 3px solid #f59e0b;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.45), 0 0 12px rgba(245,158,11,0.25);
+    }
+    .toast.error {
+      border-left: 3px solid #ef4444;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.45), 0 0 12px rgba(239,68,68,0.25);
+    }
+
+    .toast.success .toast-icon { background: rgba(34,197,94,0.15);  color: #22c55e; }
+    .toast.info    .toast-icon { background: rgba(59,130,246,0.15); color: #3b82f6; }
+    .toast.warning .toast-icon { background: rgba(245,158,11,0.15); color: #f59e0b; }
+    .toast.error   .toast-icon { background: rgba(239,68,68,0.15);  color: #ef4444; }
+
+    @keyframes toastIn {
+      from { transform: translateX(110%); opacity: 0; }
+      to   { transform: translateX(0);    opacity: 1; }
+    }
+    @keyframes toastOut {
+      from { transform: translateX(0);    opacity: 1; max-height: 60px; }
+      to   { transform: translateX(110%); opacity: 0; max-height: 0; margin-bottom: -8px; }
+    }
+
+    .toast.entering { animation: toastIn  0.32s var(--t-spring) forwards; }
+    .toast.leaving  { animation: toastOut 0.28s ease-in forwards; }
+  </style>
+</head>
+<body>
+
+  <!-- Skeleton context -->
+  <div class="skeleton">
+    <div class="sk-line" style="width:160px"></div>
+    <div class="sk-line" style="width:110px"></div>
+    <div class="sk-line" style="width:140px"></div>
+  </div>
+
+  <div class="toast-container" id="toastContainer"></div>
+
+  <script>
+  (function () {
+    const TOASTS = [
+      { type: 'success', icon: '✓', text: 'Tạo task thành công' },
+      { type: 'info',    icon: 'ℹ', text: 'Đồng bộ dữ liệu…'   },
+      { type: 'warning', icon: '⚠', text: 'Kết nối chậm'        },
+      { type: 'error',   icon: '✕', text: 'Không lưu được'      },
+    ];
+
+    const container = document.getElementById('toastContainer');
+    let wraps = [], els = [];
+
+    function createEl(t, i) {
+      const wrap = document.createElement('div');
+      wrap.className = 'toast-wrap';
+      wrap.style.animationDelay = `${i * 0.6}s`;
+
+      const el = document.createElement('div');
+      el.className = `toast ${t.type}`;
+      el.innerHTML = `
+        <div class="toast-icon">${t.icon}</div>
+        <div class="toast-text"><strong>${t.text}</strong></div>
+        <div class="toast-close">✕</div>
+      `;
+      wrap.appendChild(el);
+      return { wrap, el };
+    }
+
+    function run() {
+      container.innerHTML = '';
+      wraps = []; els = [];
+
+      TOASTS.forEach((t, i) => {
+        setTimeout(() => {
+          const { wrap, el } = createEl(t, i);
+          container.appendChild(wrap);
+          void el.offsetWidth;
+          el.classList.add('entering');
+          wraps.push(wrap); els.push(el);
+        }, i * 400);
+      });
+
+      const dismissStart = TOASTS.length * 400 + 1200;
+      TOASTS.forEach((_, i) => {
+        setTimeout(() => {
+          if (els[i]) {
+            els[i].classList.remove('entering');
+            els[i].classList.add('leaving');
+          }
+        }, dismissStart + i * 300);
+      });
+
+      const totalTime = dismissStart + TOASTS.length * 300 + 400;
+      setTimeout(run, totalTime);
+    }
+
+    run();
+  })();
+  </script>
+</body>
+</html>

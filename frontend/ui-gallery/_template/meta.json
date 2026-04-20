@@ -1,0 +1,11 @@
+{
+  "id": "category-component-name",
+  "title": "Tên hiển thị tiếng Việt",
+  "category": "sidebar",
+  "file": "category-component-name.html",
+  "width": 320,
+  "height": 240,
+  "tags": ["animation", "layout"],
+  "description": "Mô tả ngắn 1 câu về snippet.",
+  "addedAt": "YYYY-MM-DD"
+}

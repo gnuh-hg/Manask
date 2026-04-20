@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Trung tâm Hỗ trợ - Manask</title>
+  <link rel="icon" href="../img/logo_web_v2.png" type="image/png">
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/base.css" />
+  <link rel="stylesheet" href="../css/help.css" />
+  <script type="module" src="../js/help.js" defer></script>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav class="help-nav">
+    <a href="../index.html" class="nav-logo">
+      <img class="logo-web" src="../img/logo_web_v2.png" alt="Logo">
+      Manask
+    </a>
+    <div class="nav-right">
+      <a href="../index.html" class="btn-nav-dashboard">← Dashboard</a>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="help-hero">
+    <div class="help-hero-inner">
+      <div class="help-hero-badge">✦ Trung tâm Hỗ trợ</div>
+      <h1 class="help-hero-title">Chúng tôi có thể<br><span class="gradient-text">giúp gì cho bạn?</span></h1>
+      <div class="help-search-wrap">
+        <svg class="help-search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input id="help-search" type="text" placeholder="Tìm câu hỏi..." autocomplete="off" />
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTENT -->
+  <section class="help-content">
+
+    <!-- Category Tabs -->
+    <div id="help-tabs" class="help-tabs">
+      <button class="help-tab active" data-category="all">Tất cả</button>
+      <button class="help-tab" data-category="start">Bắt đầu</button>
+      <button class="help-tab" data-category="tasks">Task Manager</button>
+      <button class="help-tab" data-category="pomodoro">Pomodoro</button>
+      <button class="help-tab" data-category="chatbot">AI Chat</button>
+      <button class="help-tab" data-category="roadmap">Roadmap</button>
+      <button class="help-tab" data-category="statistics">Thống kê</button>
+      <button class="help-tab" data-category="account">Tài khoản</button>
+    </div>
+
+    <!-- FAQ List -->
+    <div id="help-faq" class="help-faq">
+
+      <!-- ===== BẮT ĐẦU ===== -->
+
+      <div class="faq-item" data-category="start">
+        <button class="faq-q">
+          Làm sao để bắt đầu sử dụng Manask?
+          <svg class="faq-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="faq-a">
+          <p>Manask tổ chức công việc theo 3 cấp: <strong>Folder → Project → Task</strong>. Bắt đầu bằng cách tạo một Folder từ sidebar trái (nút "New folder"), sau đó tạo Project bên trong Folder, và cuối cùng thêm Task vào Project. Đây là luồng cơ bản để quản lý toàn bộ công việc của bạn.</p>
+        </div>
+      </div>
+
+      <div class="faq-item" data-category="start">
+        <button class="faq-q">
+          Folder và Project khác nhau ở chỗ nào?
+          <svg class="faq-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="faq-a">
+          <p><strong>Folder</strong> đóng vai trò nhóm lớn để phân loại theo lĩnh vực — ví dụ: "Học tập", "Công việc", "Cá nhân". <strong>Project</strong> là một mảng cụ thể bên trong Folder — ví dụ: "Luyện thi IELTS", "Xây dựng website". Task được gắn trực tiếp vào Project, không gắn vào Folder.</p>
+        </div>
+      </div>
+
+      <div class="faq-item" data-category="start">
+        <button class="faq-q">
+          Tôi cần tạo tài khoản mới thế nào?
+          <svg class="faq-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="faq-a">
+          <p>Truy cập trang <strong>Đăng ký</strong> (Sign up), điền đầy đủ họ tên, email và mật khẩu, sau đó xác nhận. Sau khi đăng ký thành công, bạn có thể đăng nhập và bắt đầu sử dụng ngay.</p>
+        </div>
+      </div>
+
+      <div class="faq-item" data-category="start">
+        <button class="faq-q">
+          Manask có hỗ trợ trên điện thoại không?
+          <svg class="faq-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="faq-a">
+          <p>Có. Giao diện Manask được thiết kế responsive, hoạt động tốt trên trình duyệt mobile (Safari, Chrome). Không cần cài đặt ứng dụng — truy cập trực tiếp qua URL là đủ.</p>
+        </div>
+      </div>
+
+      <div class="faq-item" data-category="start">
+        <button class="faq-q">
+          Dữ liệu có bị mất khi tắt trình duyệt hoặc đổi thiết bị không?
+          <svg class="faq-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="faq-a">
+          <p>Không. Toàn bộ dữ liệu được lưu trên server và gắn với tài khoản. Đăng nhập lại trên bất kỳ thiết bị nào, bạn vẫn thấy đầy đủ Folder, Project và Task như cũ. Ngoài ra, Manask sử dụng IndexedDB để duy trì dữ liệu cục bộ khi mất kết nối tạm thời.</p>
+        </div>
+      </div>
+
+      <div class="faq-item" data-category="start">
+        <button class="faq-q">
+          Manask có hỗ trợ sử dụng khi mất mạng không?
+          <svg class="faq-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="faq-a">
+          <p>Có một phần. Khi mất kết nối, bạn vẫn thao tác bình thường — các thay đổi sẽ được xếp vào hàng đợi offline và tự động đồng bộ lên server ngay khi kết nối được khôi phục.</p>
+        </div>
+      </div>
+
+      <!-- ===== TASK MANAGER ===== -->
+
+      <div class="faq-item" data-category="tasks">
+        <button class="faq-q">
+          Cách tạo task đầu tiên?
+          <svg class="faq-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="faq-a">
+          <p>Chọn một Project từ sidebar trái → bấm nút <strong>"New task"</strong> ở góc trên phải vùng task → nhập tên task và nhấn Enter hoặc bấm nút xác nhận. Task mới sẽ xuất hiện ngay trong danh sách.</p>
+        </div>
+      </div>
+
+      <div class="faq-item" data-category="tasks">
+        <button class="faq-q">
+          Task có thể đặt mức ưu tiên không?
+          <svg class="faq-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="faq-a">
+          <p>Có. Bấm vào task để mở Task Detail → chọn mức <strong>Priority: Low / Medium / High</strong>. Task sẽ được đánh dấu màu tương ứng trong danh sách để dễ nhận biết và ưu tiên xử lý.</p>
+        </div>
+      </div>
+
+      <div class="faq-item" data-category="tasks">
+        <button class="faq-q">
+          Có thể đặt deadline cho task không?
+          <svg class="faq-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="faq-a">
+          <p>Có. Trong Task Detail, chọn trường <strong>Due date</strong> để gán ngày hết hạn. Có thể vào <strong>Chatbot</strong> để biết những task nào hết hạn.</p>
+        </div>
+      </div>
+
+      <div class="faq-item" data-category="tasks">
+        <button class="faq-q">
+          Kéo thả task để sắp xếp được không?
+          <svg class="faq-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="faq-a">
+          <p>Có. Giữ và kéo task đến vị trí mong muốn trong cùng Project. Thứ tự mới được lưu tự động ngay khi thả, không cần thao tác thêm.</p>
+        </div>
+      </div>
+
+      <div class="faq-item" data-category="tasks">
+        <button class="faq-q">
+          Filter và Sort hoạt động như thế nào?
+          <svg class="faq-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="faq-a">
+          <p>Bấm nút <strong>Filter</strong> hoặc <strong>Sort</strong> trên toolbar phía trên danh sách task → chọn điều kiện lọc hoặc sắp xếp (theo priority, deadline, status...) → bấm <strong>Apply</strong>. Có thể kết hợp nhiều điều kiện cùng lúc để thu hẹp danh sách theo ý muốn.</p>
+        </div>
+      </div>
+
+      <div class="faq-item" data-category="tasks">
+        <button class="faq-q">
+          Time Spent được tính từ đâu?
+          <svg class="faq-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="faq-a">
+          <p>Time Spent tự động cộng dồn từ các phiên Pomodoro đã hoàn thành và được gắn với task đó. Để ghi nhận thời gian chính xác, hãy chọn đúng task trước khi bắt đầu phiên Pomodoro — mỗi phiên Focus hoàn thành sẽ cộng thêm vào Time Spent của task.</p>
+        </div>
+      </div>
+
+      <div class="faq-item" data-category="tasks">
+        <button class="faq-q">
+          Xóa task có khôi phục lại được không?
+          <svg class="faq-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="faq-a">
+          <p>Hiện tại Manask chưa hỗ trợ thùng rác hoặc hoàn tác xóa task. Khi xóa, dữ liệu sẽ bị xóa vĩnh viễn — hãy xác nhận kỹ trước khi thực hiện.</p>
+        </div>
+      </div>
+
+      <!-- ===== POMODORO ===== -->
+
+      <div class="faq-item" data-category="pomodoro">
+        <button class="faq-q">
+          Workflow Pomodoro chuẩn trong Manask là gì?
+          <svg class="faq-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="faq-a">
+          <p>Chọn task muốn tập trung → bấm <strong>Start</strong> để bắt đầu phiên Focus (mặc định 25 phút) → khi hết giờ, nghỉ <strong>Short Break</strong> (5 phút) → lặp lại 4 vòng → sau 4 phiên Focus, nghỉ <strong>Long Break</strong> (15 phút). Đồng hồ tự động chuyển chế độ sau mỗi phiên.</p>
+        </div>
+      </div>
+
+      <div class="faq-item" data-category="pomodoro">
+        <button class="faq-q">
+          Thời lượng Focus / Break có tùy chỉnh được không?
+          <svg class="faq-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="faq-a">
+          <p>Có. Bấm icon <strong>Settings</strong> trên trang Pomodoro → điều chỉnh thời lượng Focus, Short Break và Long Break theo nhu cầu. Cài đặt được lưu tự động và áp dụng cho các phiên tiếp theo.</p>
+        </div>
+      </div>
+
+      <div class="faq-item" data-category="pomodoro">
+        <button class="faq-q">
+          Có bắt buộc phải chọn task trước khi bấm Start không?
+          <svg class="faq-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="faq-a">
+          <p>Không bắt buộc — bấm Start mà không chọn task vẫn chạy được. Tuy nhiên, nếu muốn thời gian tập trung được ghi nhận vào <strong>Time Spent</strong> của task, bạn nên chọn task trước.</p>
+        </div>
+      </div>
+
+      <div class="faq-item" data-category="pomodoro">
+        <button class="faq-q">
+          Có thể tạm dừng hoặc reset đồng hồ không?
+          <svg class="faq-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="faq-a">
+          <p>Có. Trong khi đồng hồ đang chạy, bấm <strong>Pause</strong> để tạm dừng và <strong>Resume</strong> để tiếp tục. Bấm <strong>Reset</strong> để đưa về thời điểm bắt đầu của phiên hiện tại.</p>
+        </div>
+      </div>
+
+      <div class="faq-item" data-category="pomodoro">
+        <button class="faq-q">
+          Có thể bật thông báo âm thanh khi hết giờ không?
+          <svg class="faq-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="faq-a">
+          <p>Có. Vào <strong>Settings</strong> của trang Pomodoro để bật thông báo âm thanh. Tuy nhiên Manask chưa có tính năng lựa chọn âm thanh thông báo chỉ có thể dùng âm thanh mặc định.</p>
+        </div>
+      </div>
+
+      <!-- ===== AI CHAT ===== -->
+
+      <div class="faq-item" data-category="chatbot">
+        <button class="faq-q">
+          AI Chatbot có thể làm gì?
+          <svg class="faq-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="faq-a">
+          <p>AI có thể hỗ trợ: tạo <strong>Roadmap node-based</strong> theo chủ đề bạn yêu cầu, tạo <strong>cây Folder-Project-Task</strong> hoàn chỉnh, phân tích khối lượng công việc hiện tại, và trả lời các câu hỏi liên quan đến workspace của bạn. AI được cung cấp ngữ cảnh dự án để đề xuất phù hợp hơn với tình hình thực tế.</p>
+        </div>
+      </div>
+
+      <div class="faq-item" data-category="chatbot">
+        <button class="faq-q">
+          AI có đọc dữ liệu task của tôi không?
+          <svg class="faq-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="faq-a">
+          <p>Có. AI được cấp quyền truy cập ngữ cảnh workspace (Folder, Project, Task) của bạn trong phiên chat để phân tích và đề xuất chính xác hơn. Dữ liệu này chỉ được sử dụng trong phạm vi phiên chat, không chia sẻ ra ngoài hệ thống.</p>
+        </div>
+      </div>
+
+      <div class="faq-item" data-category="chatbot">
+        <button class="faq-q">
+          Tạo folder tree bằng AI xong, lưu vào workspace thế nào?
+          <svg class="faq-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="faq-a">
+          <p>Sau khi AI trả về cấu trúc Folder-Project-Task hoặc Roadmap, một <strong>preview panel</strong> sẽ hiện ra bên phải. Bấm nút <strong>"Lưu vào workspace"</strong> trong panel đó — dữ liệu sẽ được thêm trực tiếp vào Dashboard hoặc Roadmap Editor của bạn.</p>
+        </div>
+      </div>
+
+      <div class="faq-item" data-category="chatbot">
+        <button class="faq-q">
+          Lịch sử chat có được lưu lại không?
+          <svg class="faq-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="faq-a">
+          <p>Có. Lịch sử hội thoại lưu trên server và tồn tại qua các phiên đăng nhập nhưng không lưu được toàn bộ mà chỉ lưu các phiên gần đây. Khi muốn xóa sạch, bấm nút <strong>"Xóa lịch sử"</strong> trong giao diện chat. Lưu ý: thao tác này không thể hoàn tác.</p>
+        </div>
+      </div>
+
+      <div class="faq-item" data-category="chatbot">
+        <button class="faq-q">
+          AI có hiểu tiếng Việt không?
+          <svg class="faq-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="faq-a">
+          <p>Có. AI hỗ trợ cả tiếng Việt và tiếng Anh. Bạn có thể đặt câu hỏi hoặc đưa ra yêu cầu bằng ngôn ngữ nào thuận tiện hơn.</p>
+        </div>
+      </div>
+
+      <!-- ===== ROADMAP ===== -->
+
+      <div class="faq-item" data-category="roadmap">
+        <button class="faq-q">
+          Cách tạo node mới trên canvas?
+          <svg class="faq-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="faq-a">
+          <p>Bạn kéo một node từ <strong>cây thư mục</strong> bên phải vào <strong>canvas</strong> để tạo node mới.</p>
+        </div>
+      </div>
+
+      <div class="faq-item" data-category="roadmap">
+        <button class="faq-q">
+          Kết nối 2 node với nhau thế nào?
+          <svg class="faq-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="faq-a">
+          <p>Hover vào cạnh của node nguồn cho đến khi xuất hiện <strong>dấu chấm kết nối</strong> → click và kéo sang node đích. Đường kết nối được vẽ tự động. Bạn có thể thêm nhãn vào đường kết nối bằng cách click lên nó.</p>
+        </div>
+      </div>
+
+      <div class="faq-item" data-category="roadmap">
+        <button class="faq-q">
+          Có thể xóa node hoặc đường kết nối không?
+          <svg class="faq-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="faq-a">
+          <p>Có. Chọn node hoặc đường kết nối cần xóa → nhấn phím <strong>Delete</strong> hoặc <strong>Backspace</strong>, hoặc dùng tùy chọn xóa trong menu ngữ cảnh (chuột phải vào phần tử đó).</p>
+        </div>
+      </div>
+
+      <div class="faq-item" data-category="roadmap">
+        <button class="faq-q">
+          Có thể tạo Roadmap bằng AI không?
+          <svg class="faq-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="faq-a">
+          <p>Có. Vào trang <strong>AI Chat</strong> → yêu cầu AI tạo Roadmap theo chủ đề hoặc mục tiêu cụ thể → AI trả về sơ đồ node-based trong preview panel → bấm <strong>"Lưu vào workspace"</strong> để đưa vào Roadmap Editor và tiếp tục chỉnh sửa.</p>
+        </div>
+      </div>
+
+      <div class="faq-item" data-category="roadmap">
+        <button class="faq-q">
+          Roadmap có hoạt động khi mất mạng không?
+          <svg class="faq-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="faq-a">
+          <p>Có một phần. Khi mất kết nối, canvas vẫn hiển thị bình thường và bạn vẫn thao tác được. Các thay đổi sẽ được xếp hàng offline và tự động đồng bộ lên server khi kết nối được khôi phục.</p>
+        </div>
+      </div>
+
+      <!-- ===== THỐNG KÊ ===== -->
+
+      <div class="faq-item" data-category="statistics">
+        <button class="faq-q">
+          Heatmap hiển thị dữ liệu gì?
+          <svg class="faq-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="faq-a">
+          <p>Heatmap thể hiện số task hoàn thành và số giờ tập trung mỗi ngày trong <strong>365 ngày qua</strong>. Ô càng đậm màu tương ứng với càng nhiều task hoàn thành và số giờ tập trung trong ngày đó. Hover vào từng ô để xem số liệu chính xác.</p>
+        </div>
+      </div>
+
+      <div class="faq-item" data-category="statistics">
+        <button class="faq-q">
+          Donut chart thể hiện điều gì?
+          <svg class="faq-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="faq-a">
+          <p>Donut chart cho thấy phân bổ số lượng task theo từng <strong>Project</strong> trong kỳ đã chọn. Mỗi màu tương ứng một Project, giúp bạn nhanh chóng nhận ra Project nào đang chiếm nhiều công việc nhất.</p>
+        </div>
+      </div>
+
+      <div class="faq-item" data-category="statistics">
+        <button class="faq-q">
+          Line chart theo dõi chỉ số nào?
+          <svg class="faq-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="faq-a">
+          <p>Line chart hiển thị xu hướng số task hoàn thành theo thời gian trong kỳ đã chọn, giúp bạn nhìn thấy các giai đoạn làm việc hiệu quả hoặc sụt giảm để kịp thời điều chỉnh kế hoạch.</p>
+        </div>
+      </div>
+
+      <div class="faq-item" data-category="statistics">
+        <button class="faq-q">
+          Kỳ thống kê "Tuần / Tháng / Năm" được tính thế nào?
+          <svg class="faq-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="faq-a">
+          <p>Tất cả tính tương đối từ ngày hiện tại: <strong>Tuần</strong> = 7 ngày gần nhất · <strong>Tháng</strong> = 30 ngày gần nhất · <strong>Năm</strong> = 12 tháng gần nhất. Không tính theo lịch cố định (không phải từ đầu tháng hay đầu năm dương lịch).</p>
+        </div>
+      </div>
+
+      <div class="faq-item" data-category="statistics">
+        <button class="faq-q">
+          Dữ liệu thống kê có cập nhật theo thời gian thực không?
+          <svg class="faq-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="faq-a">
+          <p>Dữ liệu được cập nhật khi bạn tải lại trang hoặc chuyển đổi kỳ thống kê. Các thay đổi như hoàn thành task sẽ phản ánh vào Thống kê sau lần tải tiếp theo.</p>
+        </div>
+      </div>
+
+      <!-- ===== TÀI KHOẢN ===== -->
+
+      <div class="faq-item" data-category="account">
+        <button class="faq-q">
+          Đổi tên hiển thị ở đâu?
+          <svg class="faq-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="faq-a">
+          <p>Bấm vào <strong>avatar</strong> ở góc dưới sidebar → popup Profile xuất hiện → chỉnh sửa tên hiển thị → bấm <strong>Save</strong>. Thay đổi có hiệu lực ngay lập tức trên toàn bộ giao diện.</p>
+        </div>
+      </div>
+
+      <div class="faq-item" data-category="account">
+        <button class="faq-q">
+          Đổi mật khẩu thế nào?
+          <svg class="faq-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="faq-a">
+          <p>Bấm vào <strong>avatar</strong> ở góc dưới sidebar → popup Profile → chọn mục <strong>Đổi mật khẩu</strong> → nhập mật khẩu hiện tại và mật khẩu mới → xác nhận. Mật khẩu mới có hiệu lực ngay sau khi lưu.</p>
+        </div>
+      </div>
+
+      <div class="faq-item" data-category="account">
+        <button class="faq-q">
+          Quên mật khẩu thì xử lý thế nào?
+          <svg class="faq-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="faq-a">
+          <p>Hiện tại Manask chưa hỗ trợ tự reset mật khẩu qua email. Nếu quên mật khẩu, vui lòng liên hệ quản trị viên hệ thống để được hỗ trợ khôi phục tài khoản.</p>
+        </div>
+      </div>
+
+      <div class="faq-item" data-category="account">
+        <button class="faq-q">
+          Dữ liệu có đồng bộ giữa các thiết bị không?
+          <svg class="faq-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="faq-a">
+          <p>Có. Mọi thay đổi được lưu trên server theo tài khoản. Đăng nhập trên bất kỳ thiết bị hay trình duyệt nào, bạn đều thấy đầy đủ dữ liệu giống nhau.</p>
+        </div>
+      </div>
+
+      <div class="faq-item" data-category="account">
+        <button class="faq-q">
+          Đăng xuất ở đâu?
+          <svg class="faq-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="faq-a">
+          <p>Bấm vào <strong>avatar</strong> ở góc dưới sidebar → popup Profile → bấm nút <strong>Đăng xuất</strong>. Phiên đăng nhập sẽ kết thúc và bạn được chuyển về trang đăng nhập.</p>
+        </div>
+      </div>
+
+      <!-- Empty search state -->
+      <div id="faq-empty" class="faq-empty" style="display: none;">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <p>Không tìm thấy câu hỏi phù hợp.</p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="help-footer">
+    <div>© 2026 <strong>Manask</strong> — Team 2T - Plain Sailing</div>
+    <div>Built for <strong>AI Young Guru · FPT</strong></div>
+  </footer>
+
+</body>
+</html>

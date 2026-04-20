@@ -1,0 +1,185 @@
+/* ── hint_float.css — Shared floating hint card ─────────────────────────── */
+
+@keyframes hint-float-slide-up {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.hint-float {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 1000;
+    width: 300px;
+    max-width: 320px;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: 16px;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
+    animation: hint-float-slide-up 0.3s ease forwards;
+    transition: opacity 0.3s ease;
+}
+
+.hint-float--out {
+    opacity: 0;
+    transform: translateY(10px);
+}
+
+/* ── Title ── */
+.hint-float-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0 0 10px;
+}
+
+/* ── Steps (default variant) ── */
+.hint-float-steps {
+    list-style: none;
+    margin: 0 0 14px;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--text-secondary);
+}
+
+.hint-float-steps li {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+}
+
+.hint-num {
+    color: var(--accent-primary);
+    font-weight: 600;
+    flex-shrink: 0;
+}
+
+/* ── Dismiss button (default variant) ── */
+.hint-float-dismiss {
+    display: block;
+    width: 100%;
+    padding: 7px 0;
+    background: var(--accent-primary);
+    color: #fff;
+    border: none;
+    border-radius: var(--radius-md);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background var(--t-base);
+}
+
+.hint-float-dismiss:hover {
+    background: var(--accent-primary-hover, #818cf8);
+}
+
+/* ── Intent variant ── */
+.hint-float--intent .hint-float-textarea {
+    width: 100%;
+    min-height: 80px;
+    resize: vertical;
+    box-sizing: border-box;
+    padding: 8px 10px;
+    background: var(--bg-input, var(--bg-surface));
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    color: var(--text-primary);
+    font-family: var(--font-sans);
+    font-size: 13px;
+    line-height: 1.5;
+    margin-bottom: 10px;
+    transition: border-color var(--t-base);
+}
+
+.hint-float--intent .hint-float-textarea:focus {
+    outline: none;
+    border-color: var(--accent-primary);
+}
+
+.hint-float--intent .hint-float-textarea:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.hint-float-actions {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+}
+
+.hint-float-btn-primary {
+    padding: 6px 14px;
+    background: var(--accent-primary);
+    color: #fff;
+    border: none;
+    border-radius: var(--radius-md);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background var(--t-base);
+    min-width: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+
+.hint-float-btn-primary:hover:not(:disabled) {
+    background: var(--accent-primary-hover, #818cf8);
+}
+
+.hint-float-btn-primary:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.hint-float-btn-ghost {
+    padding: 6px 12px;
+    background: transparent;
+    color: var(--text-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    font-size: 13px;
+    cursor: pointer;
+    transition: background var(--t-base), color var(--t-base);
+}
+
+.hint-float-btn-ghost:hover:not(:disabled) {
+    background: var(--bg-hover);
+    color: var(--text-primary);
+}
+
+.hint-float-btn-ghost:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* ── Spinner (inline loading indicator) ── */
+.hint-float-spinner {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border: 2px solid rgba(255, 255, 255, 0.4);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: hint-float-spin 0.7s linear infinite;
+}
+
+@keyframes hint-float-spin {
+    to { transform: rotate(360deg); }
+}
+
+/* ── Mobile ── */
+@media (max-width: 640px) {
+    .hint-float {
+        left: 16px;
+        right: 16px;
+        bottom: 16px;
+        max-width: none;
+        width: auto;
+    }
+}

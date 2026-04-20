@@ -1,0 +1,49 @@
+/* ─────────────────────────────────────────────────────────────
+   home.css — app-shell layout (index.html)
+   Loads AFTER base.css. Overrides body for full-screen app layout.
+   ───────────────────────────────────────────────────────────── */
+
+/* ── Reset overrides specific to the app shell ── */
+* {
+  font-family: var(--font-sans, 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif);
+}
+
+html, body {
+  height: 100%;
+  overflow: hidden;
+}
+
+/* Override base.css body padding — app shell is full-screen, not a scrollable page */
+body {
+  padding: 0;
+  background-color: #0e0d12;
+  background-image:
+    radial-gradient(rgba(255,255,255,0.05) 1px, transparent 1px),
+    linear-gradient(135deg, #0e0d12 0%, #1a1625 100%);
+  background-size: 28px 28px, 100% 100%;
+}
+
+/* ── App-content: full height next to global sidebar ── */
+.app-content {
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── App shell container ── */
+.container {
+  display: flex;
+  position: relative;
+  overflow: hidden;
+  flex: 1;
+  height: 100%;
+}
+
+/* ── Scrollbar — thinner on app shell ── */
+::-webkit-scrollbar        { width: 3px; height: 3px; }
+::-webkit-scrollbar-track  { background: transparent; }
+::-webkit-scrollbar-track:hover { background: rgba(255,255,255,0.04); }
+::-webkit-scrollbar-thumb  { background: rgba(255,255,255,0.12); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.28); }
+::-webkit-scrollbar:horizontal  { display: none; }
