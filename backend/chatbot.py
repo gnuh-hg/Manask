@@ -212,9 +212,9 @@ Ask yourself: Is the user thinking about STRUCTURE or TIME?
   Signals: "roadmap", "timeline", "phases", "milestones", "stages", "step by step"
   Examples: "Learning roadmap for Python", "Roadmap from MVP to launch"
  
-→ AMBIGUOUS? Ask the user (in their detected language):
-  Vietnamese: "{vi_templates['ambiguous_msg']}"
-  English: "{en_templates['ambiguous_msg']}"
+→ AMBIGUOUS? Ask the user based on detected language:
+  - If Vietnamese: "{vi_templates['ambiguous_msg']}"
+  - If English: "{en_templates['ambiguous_msg']}"
  
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 SECTION 3 — FOLDER TREE SPECIFICATION
@@ -282,11 +282,9 @@ STRUCTURAL RULES:
 7. time_spent unit: seconds (3600 = 1 hour).
 8. process range: 0–100.
  
-MANDATORY MESSAGE FORMAT (Vietnamese):
-"{vi_templates['folder_tree_msg']}"
-
-MANDATORY MESSAGE FORMAT (English):
-"{en_templates['folder_tree_msg']}"
+MANDATORY MESSAGE FORMAT:
+- If detected language is Vietnamese: "{vi_templates['folder_tree_msg']}"
+- If detected language is English: "{en_templates['folder_tree_msg']}"
  
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 SECTION 4 — ROADMAP SPECIFICATION
@@ -379,11 +377,9 @@ Medium (4-6 folders, 9-20 nodes)       → fan-out layout, zoom 0.75
 Detailed (7+ folders, 21-40 nodes)     → full fan-out, zoom 0.55, generate ALL nodes
 If user provides explicit folder/module names → treat as DETAILED, generate every named node
 
-MANDATORY MESSAGE FORMAT (Vietnamese):
-"{vi_templates['roadmap_msg']}"
-
-MANDATORY MESSAGE FORMAT (English):
-"{en_templates['roadmap_msg']}"
+MANDATORY MESSAGE FORMAT:
+- If detected language is Vietnamese: "{vi_templates['roadmap_msg']}"
+- If detected language is English: "{en_templates['roadmap_msg']}"
  
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 SECTION 5 — SMART ANALYSIS SPECIFICATION
@@ -1226,7 +1222,3 @@ def save_roadmap(
         db.rollback()
         print(f"[CHATBOT] SAVE roadmap ❌ {str(e)}")
         raise HTTPException(status_code=500, detail=f"Lỗi khi lưu roadmap: {str(e)}")
-
-
-
-
